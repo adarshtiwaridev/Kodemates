@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   mobile: { type: String, required: true, unique: true },           
     password: { type: String, required: true },
     accountType: { type: String, enum: [ "Adamin" ,"student", "teacher"], default: "student" },
-    additionalsetails:{
+    additionaldetails:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "profile" ,// Reference to AdditionalDetails model
         required: true

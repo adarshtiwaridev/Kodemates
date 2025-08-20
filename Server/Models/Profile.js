@@ -11,11 +11,7 @@ const profileSchema = new mongoose.Schema({
     dateOfBirth: { type: Date, required: true ,trim:true },
     address: { type: String, required: true ,trim:true },
     contactNumber: { type: String, required: true ,trim:true },
-    addressDetails: {
-        type: String,
-        required: true,
-        trim: true
-    },
+
     
 });
 const profile = mongoose.model("profile", profileSchema);

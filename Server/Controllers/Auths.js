@@ -191,7 +191,7 @@ exports.Login = async (req, res) => {
       const payload = {
         email: user.email,
         id: user._id, // Use user._id for Mongoose document ID
-        accountType: user.accountType, // Use accountType from the user object
+        role: user.accountType, // Use accountType from the user object
       };
 
       const token = jwt.sign(payload, process.env.JWT_SECRET, {

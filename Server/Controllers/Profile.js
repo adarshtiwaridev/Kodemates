@@ -149,7 +149,7 @@ exports.getAllUserDetails = async (req, res) => {
         //return response
         return res.status(200).json({
             success:true,
-            message:"All user details fetched successfully",
+            message:"All user details fetched successfully ",
             data:users
         });
      

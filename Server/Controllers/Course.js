@@ -1,6 +1,5 @@
 const Course = require("../Models/Course");
 const Section = require("../Models/Section");
-const Tag = require("../Models/Tag");
 const User = require("../Models/User");
 const { uploadOptimizedImage } = require("../utlis/Imageuploader");
 
@@ -119,19 +118,22 @@ exports.getCourseDetails = async (req, res) => {
       });
     }
 
-    const courseDetails = await Course.findById(courseId)
-      .populate(path : "instructor",{
-        populate : {
-          path : "additionalDetails",
-        }
-      })
-      .populate("catgories").populate("tag").populate("ratingandReviews")
-      .populate({
-        path : "courseContent",
-       populate : { path : "subSection"
+   const courseDetails = await Course.findById(courseId)
+  .populate({
+    path: "instructor",
+    populate: {
+      path: "additionalDetails",
+    },
+  })
+  .populate("categories")
+  .populate("tag")
+  .populate("ratingandReviews")
+  .populate({
+    path: "courseContent",
+    populate: { path: "subSection" },
+  })
+  .exec();
 
-        }
-      }).exec();
     if (!courseDetails) {
       return res.status(404).json({
         success: false,

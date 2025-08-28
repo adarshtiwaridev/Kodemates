@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 // Import the controllers
-const { capturePayment, verifySignature } = require("../controllers/Payments");
+const { capturePayment, verifySignature } = require("../Controllers/Payment");
 
 // Import the middleware
 const { auth, student } = require("../middleware/Auth");

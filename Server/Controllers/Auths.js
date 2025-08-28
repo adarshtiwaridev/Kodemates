@@ -48,7 +48,7 @@ exports.signup = async (req, res) => {
   try {
     const {
       firstName,
-      lastname,
+      lastName,
       email,
       mobile,
       password,
@@ -57,9 +57,9 @@ exports.signup = async (req, res) => {
       otp,
     } = req.body;
 
-    if (!firstName || !lastname || !email || !mobile || !password || !confirmPassword || !otp) {
-      return res.status(403).json({ success: false, message: "All inputs are required." });
-    }
+    // if (!firstName || !lastName || !email || !mobile || !password || !confirmPassword  ) {
+    //   return res.status(403).json({ success: false, message: "All inputs are required." });
+    // }
 
     if (password !== confirmPassword) {
       return res.status(403).json({ success: false, message: "Passwords do not match." });
@@ -78,21 +78,21 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const profileDetails = await Profile.create({
-      gender: null,
-      dateOfBirth: null,
-      address: null,
-      contactNumber: null,
+      gender: null || "male",
+      dateOfBirth: null || new Date(),
+      address: null || "",
+      contactNumber: null || "",
     });
 
     const user = await User.create({
       firstName,
-      lastname,
+      lastName,
       email,
       mobile,
       password: hashedPassword,
       accountType,
       additionaldetails: profileDetails._id,
-      image: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${firstName} ${lastname}`,
+      image: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${firstName} ${lastName}`,
     });
 
     return res.status(201).json({ success: true, message: "User registered successfully!", user });

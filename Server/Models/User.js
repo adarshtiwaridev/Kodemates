@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     additionaldetails:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "profile" ,// Reference to AdditionalDetails model
-        required: true
+        // required: true
     },
     courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course"  }],
     courseprogress :{

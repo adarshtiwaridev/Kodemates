@@ -1,6 +1,6 @@
 const Section = require("../Models/Section");
 const Course = require("../Models/Course");   // Import the Course model
-const Section = require("../Models/Section");
+const Sections = require("../Models/Section");
 
 // ================= CREATE SECTION =================
 exports.createSection = async (req, res) => {

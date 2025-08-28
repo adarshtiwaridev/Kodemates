@@ -1,13 +1,14 @@
 const profile =require("../Models/Profile");
 const user =require("../Models/User");
+const course = require("../Models/Course");
 
 //  update profile
 exports.updateProfile = async (req, res) => {
     try {
         //get data from req body
-           
+
         const { dateOfBirth="",contactNumber,gender,about=""} =req.body;
-      
+
 
         //get user id from req.user
          const id = req.user.id;
@@ -19,7 +20,7 @@ exports.updateProfile = async (req, res) => {
                 success:false,
                 message:"All fields are required"
             });
-        }   
+        }
         //find profile by user id and update
         const userDetails = await profile.findById(id);
         const profileid=userDetails.additionalDetails;
@@ -31,7 +32,7 @@ exports.updateProfile = async (req, res) => {
                 });
             }
             profileDetails.dateOfBirth=dateOfBirth;
-            profileDetails.contactNumber=contactNumber;     
+            profileDetails.contactNumber=contactNumber;
             profileDetails.gender=gender;
             profileDetails.about=about;
             // save profile
@@ -42,9 +43,9 @@ exports.updateProfile = async (req, res) => {
             message:"Profile updated successfully",
             data:profileDetails
         });
-     
+
     } catch (error) {
-        
+
         console.error("Error updating profile:", error.message);
         return res.status(500).json({
             success:false,
@@ -80,9 +81,9 @@ exports.deleteAccount = async (req, res) => {
             success:true,
             message:"Account deleted successfully"
         });
-     
+
     } catch (error) {
-        
+
         console.error("Error deleting account:", error.message);
         return res.status(500).json({
             success:false,
@@ -122,9 +123,9 @@ exports.getUserDetails = async (req, res) => {
             message:"Profile details fetched successfully",
             data:profileDetails
         });
-     
+
     } catch (error) {
-        
+
         console.error("Error fetching profile details:", error.message);
         return res.status(500).json({
             success:false,
@@ -132,13 +133,13 @@ exports.getUserDetails = async (req, res) => {
             error:error.message
         });
     }
-} 
+}
 
 // get all user details
 exports.getAllUserDetails = async (req, res) => {
     try {
         //get all users
-    
+
          const users = await user.find().populate("additionalDetails").exec();
         if(!users){
             return res.status(404).json({
@@ -152,9 +153,9 @@ exports.getAllUserDetails = async (req, res) => {
             message:"All user details fetched successfully ",
             data:users
         });
-     
+
     } catch (error) {
-        
+
         console.error("Error fetching all user details:", error.message);
         return res.status(500).json({
             success:false,
@@ -190,28 +191,37 @@ exports.getEnrolledCourses = async (req, res) => {
 };
 
 // ADD THIS: update display picture
-// ADD THIS: get enrolled courses
-exports.getEnrolledCourses = async (req, res) => {
+exports.updateDisplayPicture = async (req, res) => {
     try {
+        const displayPicture = req.files.displayPicture;
         const userId = req.user.id;
-        const userDetails = await user.findById(userId).populate("courses").exec();
-        if (!userDetails) {
-            return res.status(404).json({
+
+        if (!displayPicture) {
+            return res.status(400).json({
                 success: false,
-                message: "User not found",
+                message: "Display picture is required"
             });
         }
+
+        // Upload to cloudinary (you'll need to implement this)
+        // For now, just update the user's image field
+        const userDetails = await user.findByIdAndUpdate(
+            userId,
+            { image: displayPicture.name }, // You might want to store the cloudinary URL here
+            { new: true }
+        );
+
         return res.status(200).json({
             success: true,
-            message: "Enrolled courses fetched successfully",
-            data: userDetails.courses,
+            message: "Display picture updated successfully",
+            data: userDetails
         });
     } catch (error) {
-        console.error("Error fetching enrolled courses:", error.message);
+        console.error("Error updating display picture:", error.message);
         return res.status(500).json({
             success: false,
-            message: "Something went wrong while fetching enrolled courses",
-            error: error.message,
+            message: "Something went wrong while updating display picture",
+            error: error.message
         });
     }
 };

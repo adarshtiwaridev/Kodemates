@@ -23,7 +23,7 @@ const {
   createSection,
   updateSection,
   deleteSection,
-} = require("../controllers/Section")
+} = require("../controllers/Sections")
 
 // Sub-Sections Controllers Import
 const {
@@ -34,10 +34,10 @@ const {
 
 // Rating Controllers Import
 const {
-  createRating,
+  createRatingAndReviews,
   getAverageRating,
-  getAllRating, // ✅ correct import
-} = require("../controllers/RatingAndReview")
+  getAllRatings, // ✅ correct import
+} = require("../Controllers/RatingAndReviews")
 
 // Importing Middlewares
 const { auth, instructor, student, admin } = require("../middleware/Auth")
@@ -75,8 +75,8 @@ router.post("/getCategoryPageDetails", categoryPageDetails)
 // ********************************************************************************************************
 //                                      Rating and Review
 // ********************************************************************************************************
-router.post("/createRating", auth, student, createRating)
+router.post("/createRating", auth, student, createRatingAndReviews)
 router.get("/getAverageRating", getAverageRating)
-router.get("/getReviews", getAllRating) // ✅ fixed function name
+router.get("/getReviews", getAllRatings) // ✅ fixed function name
 
 module.exports = router

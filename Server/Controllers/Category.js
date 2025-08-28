@@ -1,4 +1,4 @@
-const Category = require("../Models/Category");
+const Category = require("../Models/Categories");
 const Course = require("../Models/Course");
 
 // create a new category

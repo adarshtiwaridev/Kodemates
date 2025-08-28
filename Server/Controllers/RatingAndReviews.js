@@ -1,5 +1,5 @@
 const Course = require("../Models/Course");
-const RatingAndReview = require("../Models/RatingAndReviews");
+const RatingAndReview = require("../Models/RatingAndReview");
 const User = require("../Models/User");
 const mongoose = require("mongoose");
 

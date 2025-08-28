@@ -4,13 +4,13 @@ const profileSchema = new mongoose.Schema({
   
    gender: {
     type: String,
-    required: true,
+  
     enum: ["male" ,"female","Not Specified"],
     default: ""
     },
-    dateOfBirth: { type: Date, required: true ,trim:true },
-    address: { type: String, required: true ,trim:true },
-    contactNumber: { type: String, required: true ,trim:true },
+    dateOfBirth: { type: Date,  trim:true },
+    address: { type: String,  trim:true },
+    contactNumber: { type: String,  trim:true },
 
     
 });

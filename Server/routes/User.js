@@ -28,9 +28,7 @@ console.log({
   auth,
 })
 
-// ********************************************************************************************************
-//                                      Authentication routes
-// ********************************************************************************************************
+
 
 // Route for user login
 router.post("/login", login || ((req, res) => res.status(500).json({ error: "login handler missing" })))
@@ -38,11 +36,11 @@ router.post("/login", login || ((req, res) => res.status(500).json({ error: "log
 // Route for user signup
 router.post("/signup", signup || ((req, res) => res.status(500).json({ error: "signup handler missing" })))
 
-// Route for sending OTP to the user's email
+// Route for sending OTP 
 router.post("/sendotp", sendotp || ((req, res) => res.status(500).json({ error: "sendotp handler missing" })))
 
 // Route for Changing the password
-router.post("/changepassword", auth, changePassword || ((req, res) => res.status(500).json({ error: "changePassword handler missing" })))
+router.post("/changePassword", auth, changePassword || ((req, res) => res.status(500).json({ error: "changePassword handler missing" })))
 
 // ********************************************************************************************************
 //                                      Reset Password

@@ -123,11 +123,11 @@ exports.login = async (req, res) => {
     if (!email || !password) {
       return res.status(403).json({ success: false, message: "All fields are required." });
     }
-    const allusers = await User.find();
-    console.log("All users:", allusers);
+    // const allusers = await User.find();
+    // console.log("All users:", allusers);
    const emailClean = email.trim().toLowerCase();
 
-const user = await User.findOne({ email: emailClean }).populate("additionaldetails");
+const user = await User.findOne({ email: emailClean }).populate("additionalDetails").populate("courseprogress").populate("courses");
 
 if (!user) {
   console.log("Email searched:", emailClean);
@@ -195,3 +195,14 @@ exports.changePassword = async (req, res) => {
   }
 };
 // ------------------ LOGOUT ------------------
+exports.logout = async (req, res) => {
+  try {
+    res.clearCookie("token").status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    return res.status(500).json({ success: false, message: "Logout failed." });
+  }
+}

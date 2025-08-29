@@ -4,32 +4,20 @@ const router = express.Router();
 // Import middleware
 const { auth } = require("../middleware/Auth");
 
-// Import controllers
 const {
   deleteAccount,
   updateProfile,
   getAllUserDetails,
-  updateDisplayPicture,
+  getUserDetails,
   getEnrolledCourses,
-} = require("../controllers/Profile");
-
-// ********************************************************************************************************
-//                                      Profile routes
-// ********************************************************************************************************
-
-// Delete User Account
+  updateDisplayPicture,
+} = require("../Controllers/Profile");
+// Define routes and attach middleware and controllers
 router.delete("/deleteProfile", auth, deleteAccount);
-
-// Update Profile
 router.put("/updateProfile", auth, updateProfile);
-
-// Get User Details
-router.get("/getUserDetails", auth, getAllUserDetails);
-
-// Get Enrolled Courses
+router.get("/getUserDetails", auth, getUserDetails);
+router.get("/getAllUserDetails", auth, getAllUserDetails);
 router.get("/getEnrolledCourses", auth, getEnrolledCourses);
-
-// Update Display Picture
 router.put("/updateDisplayPicture", auth, updateDisplayPicture);
 
 module.exports = router;

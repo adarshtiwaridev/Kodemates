@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   mobile: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    accountType: { type: String, enum: [ "Adamin" ,"student", "teacher"], default: "student" },
+    accountType: { type: String, enum: [ "Admin" ,"Student", "Teacher"], default: "Student" },
     additionaldetails:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "profile" ,// Reference to AdditionalDetails model
@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
         ref: "CourseProgress" // Reference to CourseProgress model
 
     },
-    profilePicture: { type: String, default: "" },
+    profilePicture: { type: String, default: "https://static.vecteezy.com/system/resources/previews/024/183/525/non_2x/avatar-of-a-man-portrait-of-a-young-guy-illustration-of-male-character-in-modern-color-style-vector.jpg" },
     token:
     {
       type:String,

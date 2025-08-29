@@ -47,7 +47,7 @@ app.use("/api/users", userRoutes);
 
 // Simple test route
 app.get("/", (req, res) => {
-  res.status(200).json({ success: true, message: "API is running..." });
+  res.status(200).json({ success: true, message: "Server is running correctlt " });
 });
 
 // Activate the server

@@ -7,13 +7,14 @@ const {
   login,
   signup,
   sendotp,
+  logout,
   changePassword,
-} = require("../controllers/Auths")
+} = require("../Controllers/Auths")
 
 const {
   resetPasswordToken,
   resetPassword,
-} = require("../controllers/Resetpassword")
+} = require("../Controllers/Resetpassword")
 
 const { auth } = require("../middleware/Auth")
 
@@ -36,11 +37,12 @@ router.post("/login", login || ((req, res) => res.status(500).json({ error: "log
 // Route for user signup
 router.post("/signup", signup || ((req, res) => res.status(500).json({ error: "signup handler missing" })))
 
-// Route for sending OTP 
+// Route for sending OTP
 router.post("/sendotp", sendotp || ((req, res) => res.status(500).json({ error: "sendotp handler missing" })))
-
+// Route for user logout
+router.post("/logout", logout || ((req, res) => res.status(500).json({ error: "logout handler missing" })))
 // Route for Changing the password
-router.post("/changePassword", auth, changePassword || ((req, res) => res.status(500).json({ error: "changePassword handler missing" })))
+router.put("/changePassword", auth, changePassword || ((req, res) => res.status(500).json({ error: "changePassword handler missing" })))
 
 // ********************************************************************************************************
 //                                      Reset Password

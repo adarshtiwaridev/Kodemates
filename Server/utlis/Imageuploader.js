@@ -3,57 +3,56 @@ require("dotenv").config();
 
 // Cloudinary config
 cloudinary.config({
-  cloud_name: process.env.cloud_name,
-  api_key: process.env.api_key,
-  api_secret: process.env.api_secret,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 /**
- * Upload optimized image to Cloudinary
- * @param {string} filePath - Local file path (from multer/temp)
+ * Upload file (image/video/raw) to Cloudinary with optional optimizations
+ * @param {string} filePath - Local file path (from express-fileupload tempFilePath)
  * @param {string} folderName - Cloudinary folder name
- * @param {object} options - { height, width, quality, format, crop }
- * @returns {object} Uploaded image details
+ * @param {object} options - { resource_type, height, width, quality, format, crop }
+ * @returns {object} Uploaded file details
  */
-const uploadOptimizedImage = async (filePath, folderName, options = {}) => {
+const uploadOptimizedFile = async (filePath, folderName, options = {}) => {
   try {
     const result = await cloudinary.uploader.upload(filePath, {
       folder: folderName || "uploads",
-      resource_type: "image",
+      resource_type: options.resource_type || "auto", // auto detects image/video/raw
 
-      // Optimizations
-      height: options.height || 600,
-      width: options.width || 600,
-      crop: options.crop || "fill",
-      quality: options.quality || "auto",
-      format: options.format || "webp",
+      // Optimizations only for images
+      ...(options.resource_type === "image" && {
+        height: options.height || 600,
+        width: options.width || 600,
+        crop: options.crop || "fill",
+        quality: options.quality || "auto",
+        format: options.format || "webp",
+      }),
     });
-
     return result;
   } catch (error) {
     console.error("Cloudinary Upload Error:", error);
-    throw new Error("Image upload failed");
+    throw new Error("File upload failed");
   }
 };
 
 /**
- * Delete image from Cloudinary
- * @param {string} publicId - Cloudinary public_id of the image
- * @returns {object} Deletion response
+ * Delete file from Cloudinary
+ * @param {string} publicId - Cloudinary public_id
+ * @param {string} resource_type - "image" | "video" | "raw"
  */
-const deleteImageFromCloudinary = async (publicId) => {
+const deleteFileFromCloudinary = async (publicId, resource_type = "image") => {
   try {
-    const result = await cloudinary.uploader.destroy(publicId, {
-      resource_type: "image",
-    });
+    const result = await cloudinary.uploader.destroy(publicId, { resource_type });
     return result;
   } catch (error) {
     console.error("Cloudinary Delete Error:", error);
-    throw new Error("Image deletion failed");
+    throw new Error("File deletion failed");
   }
 };
 
 module.exports = {
-  uploadOptimizedImage,
-  deleteImageFromCloudinary,
+  uploadOptimizedFile,
+  deleteFileFromCloudinary,
 };

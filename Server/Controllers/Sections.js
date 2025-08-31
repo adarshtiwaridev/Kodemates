@@ -1,6 +1,5 @@
 const Section = require("../Models/Section");
-const Course = require("../Models/Course");   // Import the Course model
-const Sections = require("../Models/Section");
+const Course = require("../Models/Course");   // Import the Course models
 
 // ================= CREATE SECTION =================
 exports.createSection = async (req, res) => {
@@ -16,8 +15,11 @@ exports.createSection = async (req, res) => {
       });
     }
 
-    // 3. Section create
-    const newSection = await Section.create({ sectionName });
+    // 3. Create section
+    const newSection = await Section.create({
+      sectionName,
+      courseId,
+    });
 
     // 4. Update course by pushing Section _id into courseContent
     const updatedCourse = await Course.findByIdAndUpdate(
@@ -28,13 +30,12 @@ exports.createSection = async (req, res) => {
       { new: true }
     )
       .populate({
-        path: "courseContent", // matches field name in Course schema
+        path: "courseContent",
         populate: {
-          path: "subSection", // subSection is inside Section schema
+          path: "subsections", // ✅ matches Section schema
         },
       })
-      .exec(); 
-
+      .exec();
 
     // 5. Send response
     return res.status(200).json({
@@ -53,38 +54,51 @@ exports.createSection = async (req, res) => {
 };
 
 
-// update subsection  
- exports.updateSection =async (req,res)=>{
-     try {
-        //date fetch 
-        const {sectionName ,sectionId} =req.body;
 
-        //validate 
-        if (!sectionName ||!sectionId) {
-           return res.status(403).json({
-            success:false,
-            message:"All inputs are required"
-           } );
-        }
-        //find by id and update 
-  const Section =await Section.findByIdAndUpdate(sectionId,{
-    sectionName
-  },{new:true});
-        //return 
- return res.status(200).json({
+// ================= UPDATE SECTION =================
+exports.updateSection = async (req, res) => {
+  try {
+    // data fetch
+    const { sectionName, sectionId } = req.body;
+
+    // validate 
+    if (!sectionName || !sectionId) {
+      return res.status(403).json({
+        success: false,
+        message: "All inputs are required",
+      });
+    }
+
+    // find by id and update 
+    const updatedSection = await Section.findByIdAndUpdate(
+      sectionId,
+      { sectionName },
+      { new: true }
+    ).populate("subsections"); // optional: if you want updated subsections also
+
+    if (!updatedSection) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found",
+      });
+    }
+
+    // return 
+    return res.status(200).json({
       success: true,
       message: "Section updated successfully",
-      updatedCourse,
+      updatedSection,
     });
-        
-     } catch (error) {
-        
-        return res.status(500).json({
-            success:false,
-            message:"Something error while updating"
-        })
-     }
- }
+
+  } catch (error) {
+    console.error("Error updating section:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong while updating section",
+      error: error.message,
+    });
+  }
+};
 
  // delete subsection  
  exports.deleteSection =async (req,res)=>{

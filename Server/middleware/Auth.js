@@ -40,7 +40,7 @@ exports.student = (req, res, next) => {
 };
 
 exports.instructor = (req, res, next) => {
-  if (req.user.role !== "Instructor") {
+  if (req.user.role !== "Teacher") {
     return res.status(403).json({ success: false, message: "Instructor only route" });
   }
   next();

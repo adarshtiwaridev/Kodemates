@@ -90,11 +90,7 @@ const categories = [
     title: 'Global Community',
     description: 'Join thousands of learners from around the world.',
   },
-  {
-    icon: <FaUsers className="text-4xl text-pink-500 mb-4" />,
-    title: 'Peer Collaboration',
-    description: 'Interact and collaborate in group projects and forums.',
-  }
+
 ];
 
 

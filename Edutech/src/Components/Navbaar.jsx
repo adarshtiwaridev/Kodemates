@@ -14,16 +14,16 @@ import {
 
 const Navbar = () => {
   return (
-    <nav className="bg-white shadow-lg border-b border-gray-100 sticky top-0 z-50">
+    <nav className="bg-white shadow-lg border-b border-gray-100  sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-6">
-        <div className="flex justify-between items-center h-24">
+        <div className="flex justify-between items-center h-28">
 
           {/* Logo Section */}
           <div className="flex items-center space-x-3">
             <img
-              src="/image.png"
+              src="/Images/logo2.png"
               alt="EduLerns Logo"
-              className="w-22 h-22 object-contain"
+              className="w-30 h-28 object-fill"
             />
           </div>
 

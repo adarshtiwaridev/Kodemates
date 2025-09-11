@@ -1,5 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { FaChevronLeft, FaChevronRight, FaPlay, FaPause } from 'react-icons/fa';
+import { 
+  FaChevronLeft, 
+  FaChevronRight, 
+  FaPlay, 
+  FaPause, 
+  FaStar, 
+  FaStarHalfAlt, 
+  FaRegStar, 
+  FaClock, 
+  FaUserGraduate, 
+  FaCertificate, 
+  FaLaptopCode, 
+  FaUniversity, 
+  FaChalkboardTeacher 
+  ,FaAward,FaMobileAlt,FaGlobe,FaUsers
+} from 'react-icons/fa';
+
+import { BsFillPatchCheckFill } from 'react-icons/bs';
+import Question from './Question';
 
 const Home = () => {
   // Sample carousel data - replace these with your backend data
@@ -29,6 +47,57 @@ const Home = () => {
       buttonLink: '#'
     }
   ];
+
+
+const categories = [
+  {
+    icon: <FaLaptopCode className="text-4xl text-blue-500 mb-4" />,
+    title: 'Coding Bootcamps',
+    description: 'Learn full-stack web development with hands-on projects.',
+  },
+  {
+    icon: <FaUniversity className="text-4xl text-green-500 mb-4" />,
+    title: 'Online Degrees',
+    description: 'Earn accredited degrees without leaving your home.',
+  },
+  {
+    icon: <FaChalkboardTeacher className="text-4xl text-purple-500 mb-4" />,
+    title: 'Expert Instructors',
+    description: 'Get mentored by industry experts and seasoned educators.',
+  },
+  {
+    icon: <FaCertificate className="text-4xl text-yellow-500 mb-4" />,
+    title: 'Certification Programs',
+    description: 'Acquire professional certifications to boost your career.',
+  },
+  {
+    icon: <FaClock className="text-4xl text-indigo-500 mb-4" />,
+    title: 'Flexible Learning',
+    description: 'Study at your own pace with 24/7 access to materials.',
+  },
+  {
+    icon: <FaAward className="text-4xl text-red-500 mb-4" />,
+    title: 'Industry Recognized',
+    description: 'Our certifications are backed by top tech companies.',
+  },
+  {
+    icon: <FaMobileAlt className="text-4xl text-teal-500 mb-4" />,
+    title: 'Mobile Access',
+    description: 'Learn on the go with our fully responsive mobile platform.',
+  },
+  {
+    icon: <FaGlobe className="text-4xl text-orange-500 mb-4" />,
+    title: 'Global Community',
+    description: 'Join thousands of learners from around the world.',
+  },
+  {
+    icon: <FaUsers className="text-4xl text-pink-500 mb-4" />,
+    title: 'Peer Collaboration',
+    description: 'Interact and collaborate in group projects and forums.',
+  }
+];
+
+
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -141,51 +210,215 @@ const Home = () => {
         </button>
 
       </div>
+{/**catogeries page  */}
 
-    {/* Features Section */}
-<div className="py-24 bg-gray-100">
-  <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
-    <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-16">
-      Why Choose Our Platform?
-    </h2>
+<div className="py-12 bg-gray-100">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p className="text-xl font-bold text-gray-400 mb-2 uppercase">Popular Categories</p>
+      <h1 className="text-3xl font-bold mb-10">Providing Online Classes for Remote Learning</h1>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-      {[
-        {
-          icon: '🎓',
-          title: 'Expert Instructors',
-          description: 'Learn from industry professionals with years of real-world experience guiding you every step of the way.',
-        },
-        {
-          icon: '⏱️',
-          title: 'Flexible Learning',
-          description: 'Study anytime, anywhere. Access materials 24/7 and learn at your own pace without any pressure.',
-        },
-        {
-          icon: '📜',
-          title: 'Certification',
-          description: 'Get industry-recognized certificates after completing courses to boost your career and credibility.',
-        },
-      ].map((feature, index) => (
-        <div
-          key={index}
-          className="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center"
-        >
-          <div className="text-5xl mb-5">{feature.icon}</div>
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-            {feature.title}
-          </h3>
-          <p className="text-gray-600 leading-relaxed">
-            {feature.description}
-          </p>
-        </div>
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {categories.map((cat, idx) => (
+          <div
+            key={idx}
+            className="bg-white p-10 rounded-lg shadow-md border-2 border-gray-200 transform transition duration-300 hover:border-blue-500 hover:-translate-y-3"
+          >
+            <div className="flex justify-center  ">{cat.icon}</div>
+            <h2 className="text-xl font-semibold mb-2">{cat.title}</h2>
+            <p className="text-gray-600">{cat.description}</p>
+          </div>
+        ))}
+      </div>
+     
+  
     </div>
+    
+    </div>
+
+
+
+
+
+      {/* {Premium Courses Section */}
+      <div className="py-20 bg-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full mb-4">
+              Premium Learning
+            </span>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Premium Courses</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">Upgrade your skills with our most popular premium courses taught by industry experts</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                id: 1,
+                title: 'Advanced Web Development',
+                instructor: 'Sarah Johnson',
+                rating: 4.8,
+                students: 1245,
+                duration: '32 hours',
+                price: '$149.99',
+                originalPrice: '$249.99',
+                image: 'https://source.unsplash.com/random/600x400/?web,development',
+                isBestseller: true,
+                features: ['Project-based learning', 'Certificate included', 'Lifetime access']
+              },
+              {
+                id: 2,
+                title: 'Data Science Masterclass',
+                instructor: 'Michael Chen',
+                rating: 4.9,
+                students: 987,
+                duration: '45 hours',
+                price: '$199.99',
+                originalPrice: '$349.99',
+                image: 'https://source.unsplash.com/random/600x400/?data,science',
+                isBestseller: true,
+                features: ['Hands-on projects', 'Python & R', 'Real-world case studies']
+              },
+              {
+                id: 3,
+                title: 'UI/UX Design Pro',
+                instructor: 'Emma Wilson',
+                rating: 4.7,
+                students: 856,
+                duration: '28 hours',
+                price: '$129.99',
+                originalPrice: '$199.99',
+                image: 'https://source.unsplash.com/random/600x400/?ui,design',
+                isBestseller: false,
+                features: ['Figma & Adobe XD', 'Portfolio projects', '1-on-1 mentoring']
+              }
+            ].map((course) => (
+              <div key={course.id} className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div className="relative">
+                  <img 
+                    src={course.image} 
+                    alt={course.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  {course.isBestseller && (
+                    <div className="absolute top-4 left-4 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      Bestseller
+                    </div>
+                  )}
+                  <div className="absolute bottom-4 right-4 bg-blue-600 text-white text-sm font-bold px-3 py-1 rounded-full">
+                    {course.rating} ★
+                  </div>
+                </div>
+                
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-xl font-bold text-gray-900">{course.title}</h3>
+                    <div className="flex items-center">
+                      <span className="text-2xl font-bold text-blue-600">{course.price}</span>
+                      <span className="ml-2 text-sm text-gray-500 line-through">{course.originalPrice}</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-4">By {course.instructor}</p>
+                  
+                  <div className="flex items-center text-sm text-gray-500 mb-4">
+                    <div className="flex items-center mr-4">
+                      <FaClock className="mr-1 text-blue-500" />
+                      <span>{course.duration}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <FaUserGraduate className="mr-1 text-blue-500" />
+                      <span>{course.students.toLocaleString()} students</span>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    {course.features.map((feature, index) => (
+                      <div key={index} className="flex items-center mb-2">
+                        <BsFillPatchCheckFill className="text-green-500 mr-2" />
+                        <span className="text-gray-700">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                    Enroll Now
+                    <FaCertificate className="ml-2" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <button className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+              View All Premium Courses
+              <FaChevronRight className="ml-2" />
+            </button>
+          </div>
+        </div>
+      </div> 
+
+
+{/**  industry projects page  */}
+
+ <div className="py-5 gap-20 flex flex-col bg-gray-100 pb-10">
+      {/* Heading */}
+      <div className="text-center mb-12">
+        <p className="text-teal-400 uppercase text-3xl font-semibold mb-2 font-serif">Our Advantages</p>
+        <h1 className="text-4xl font-bold font-serif text-gray-900">
+          You've come to the right <br/> place to learn
+        </h1>
+      </div>
+
+{/* Cards Container */}
+<div className="max-w-5xl py mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-20">
+
+  {/* Card 1 */}
+  <div className="text-center">
+    <img 
+      src="/Images/online.png" 
+      alt="Online Courses" 
+      className="mx-auto mb-4 h-84 w-84 object-contain transform transition-transform duration-300 hover:scale-105  hover:-translate-y-2"
+    />
+    <h2 className="text-2xl font-bold mb-2 font-sans">13 Courses</h2>
+    <p className="text-gray-600 font-sans text-[15px]">
+      Whether you want to learn or to share what you know, you’ve come to the right place.
+    </p>
   </div>
+
+  {/* Card 2 */}
+  <div className="text-center">
+    <img 
+      src="/Images/industry.png" 
+      alt="Industry Instructors" 
+      className="mx-auto mb-4 h-84 w-84 object-contain transform transition-transform duration-300 hover:scale-105 hover:-translate-y-2"
+    />
+    <h2 className="text-2xl font-bold mb-2">Industry Instructors</h2>
+    <p className="text-gray-600">
+      Whether you want to learn or to share what you know, you’ve come to the right place.
+    </p>
+  </div>
+
+  {/* Card 3 */}
+  <div className="text-center">
+    <img 
+      src="/Images/lifetime.png" 
+      alt="Lifetime Access" 
+      className="mx-auto mb-4 h-84 w-84 object-contain transform transition-transform duration-300 hover:scale-105 hover:-translate-y-2"
+    />
+    <h2 className="text-2xl font-bold mb-2">Lifetime Access</h2>
+    <p className="text-gray-600">
+      Whether you want to learn or to share what you know, you’ve come to the right place.
+    </p>
+  </div>
+
 </div>
 
+    </div>
 
-  
+
+    <Question/>
+
       {/* CTA Section */}
       <div className="py-20 bg-blue-600 text-white">
         <div className="max-w-4xl mx-auto text-center px-4">
@@ -199,8 +432,6 @@ const Home = () => {
           </a>
         </div>
       </div>
-    
-
     </div>
   );
 };

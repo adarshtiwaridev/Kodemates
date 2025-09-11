@@ -22,9 +22,9 @@ const Footer = () => {
             {/* Logo and Brand */}
             <div className="flex items-center space-x-3">
              <img
-              src="/image.png"
+              src="/Images/logo.png"
               alt="EduLerns Logo"
-              className="w-22 h-22 object-contain"
+              className="w-15 h-15 object-contain"
             />
             </div>
 

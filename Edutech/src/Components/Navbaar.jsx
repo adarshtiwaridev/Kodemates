@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import login from "../Pages/Login";
+import { useNavigate } from "react-router-dom";
 import {
   FaSearch,
   FaShoppingCart,
@@ -24,6 +26,12 @@ import {
 
 const Navbaar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate("/login");
+    setIsOpen(false); // Close mobile menu on navigation
+  }
 
   // ✅ Centralized nav items
   const navItems = [
@@ -125,7 +133,7 @@ const Navbaar = () => {
               <FaUser className="w-4 h-4" />
             </button>
 
-            <button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg font-semibold hover:scale-105 flex items-center space-x-2 transition">
+            <button    onClick={() => handleNavigation("/login")}  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg font-semibold hover:scale-105 flex items-center space-x-2 transition">
               <FaSignInAlt className="w-4 h-4" />
               <span>Try for Free</span>
             </button>
@@ -170,11 +178,13 @@ const Navbaar = () => {
               </Link>
             )
           )}
+   
 
-          <div className="pt-4 border-t">
-            <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg font-semibold hover:scale-105 flex items-center justify-center space-x-2 transition">
+
+          <div className="pt-4 border-t"  >
+            <button  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg font-semibold hover:scale-105 flex items-center justify-center space-x-2 transition"  onClick={() => handleNavigation("/login")}>
               <FaSignInAlt className="w-4 h-4" />
-              <span>Try for Free</span>
+              <span >Try for Free</span>
             </button>
           </div>
         </div>

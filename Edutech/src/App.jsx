@@ -8,6 +8,8 @@ import Footer from "./Components/Footer";
 import Courses from "./Components/courses";
 import Blogs from "./Components/blogs";
 import Quiz from "./Pages/Quiz";
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
 import AdminQuiz from "./Pages/AdminQuiz";
 
 function App() {
@@ -19,19 +21,17 @@ function App() {
 
         <Route path="/" element={<Home/>} />
         <Route path="/courses" element={<Courses/>}/>
-        <Route path="/Login" element={<login/>}/>
+        <Route path="/login" element={<Login/>}/>
+        <Route path ="/signup" element={<Signup/>}/>
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/admin-quiz" element={<AdminQuiz />} />
+        <Route path="*" element={<h1 className="text-3xl font-bold underline">404 Not Found!</h1>} />
 
       </Routes>
-      {/* <Signup/> */}
-      {/* <Login/>   */}
-      {/* <Courses/> */}
       <Footer/>
-      {/* <Login/> */}
     </div>
 
   )

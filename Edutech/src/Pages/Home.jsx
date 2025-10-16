@@ -209,6 +209,7 @@ const categories = [
 {/**catogeries page  */}
 
 <div className="py-12 bg-gray-100">
+  
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <p className="text-xl font-bold text-gray-400 mb-2 uppercase">Popular Categories</p>
       <h1 className="text-3xl font-bold mb-10">Providing Online Classes for Remote Learning</h1>

@@ -2,42 +2,58 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const VerifyOtp = () => {
+  const navigate = useNavigate();
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const location = useLocation();
 
-  // Email passed from signup page (recommended)
-  const email = location.state?.email;
-
-  const handleSubmit = async (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
 
     if (!otp || otp.length !== 6) {
-      setError("Please enter a valid 6-digit OTP");
+      setError("Enter valid 6-digit OTP");
       return;
     }
 
+    // Get saved signup data
+    const storedData = localStorage.getItem("signupData");
+
+    if (!storedData) {
+      setError("Session expired. Please signup again.");
+      return;
+    }
+
+    const formData = JSON.parse(storedData);
+
     try {
-      const res = await fetch("http://localhost:5000/api/users/verify-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, otp }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/users/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+            otp: otp,
+          }),
+        }
+      );
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "OTP verification failed");
+        setError(data.message);
         return;
       }
 
-      // Success
-      navigate("/login");
+      // Clear localStorage after success
+      localStorage.removeItem("signupData");
+
+      // Redirect to login
+      navigate("/dashboard");
+
     } catch (err) {
-      setError("Server not responding. Try again later.");
+      setError("Verification failed. Try again.");
     }
   };
 
@@ -55,7 +71,8 @@ const VerifyOtp = () => {
           Enter the 6-digit OTP sent to your email
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleVerify} className="space-y-4">
+
           <div>
             <label className="block text-white text-sm font-medium">
               OTP Code

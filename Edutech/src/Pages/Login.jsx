@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setToken, setUser } from '../slices/authSlice';
-import { toast } from 'react-toastify';
+import toast from "react-hot-toast";
+
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -39,11 +40,13 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       setIsLoading(true);
       try {
+        
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/login`, {
           method: "POST",
           credentials: "include",

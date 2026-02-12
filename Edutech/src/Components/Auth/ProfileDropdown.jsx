@@ -13,7 +13,7 @@ const ProfileDropdown = () => {
   const user = useSelector((state) => state?.profile?.user);
   const token = useSelector((state) => state?.auth?.token);
 
-  if (!user || !token) return null; // Hide dropdown if not logged in
+  // if (!user || !token) return null; // Hide dropdown if not logged in
 
   const handleLogout = () => {
     dispatch(logout());

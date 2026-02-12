@@ -126,7 +126,6 @@ const Navbaar = () => {
                 )}
               </Link>
             )}
-
             {/* AUTH SECTION */}
             {!token ? (
               <div className="hidden md:flex items-center gap-3">

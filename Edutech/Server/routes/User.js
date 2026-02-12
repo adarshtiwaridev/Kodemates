@@ -26,10 +26,12 @@ if (typeof auth !== "function") {
 
 router.post("/login", login);
 router.post("/signup", signup);
+
+router.post("/login", login);
+router.post("/signup", signup);
 router.post("/sendotp", sendotp);
 router.post("/logout", logout);
 router.post("/verify-otp", verifyOtp);
-
 /* ================= PASSWORD ================= */
 
 router.put("/changePassword", auth, changePassword);

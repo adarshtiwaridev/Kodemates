@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Provider store={store}>
     <BrowserRouter>
       <App />
-      <Toaster/> 
+      <Toaster /> 
     </BrowserRouter>
     </Provider>
   </React.StrictMode>,

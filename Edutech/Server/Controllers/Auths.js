@@ -11,30 +11,53 @@ require("dotenv").config();
 exports.sendotp = async (req, res) => {
   try {
     const { email } = req.body;
+    console.log("Received email for OTP:", email);
 
-    // check if user already exists
-    const checkUserPresent = await User.findOne({ email });
-    if (checkUserPresent) {
-      return res.status(401).json({
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required.",
+      });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
         success: false,
         message: "User already exists. Please login instead.",
       });
     }
 
-    // generate 6-digit OTP
     const generateOTP = customAlphabet("1234567890", 6);
     const otp = generateOTP();
-    console.log("Generated OTP:", otp);
 
-    // save OTP to DB
-    const otpBody = await Otp.create({ email, otp });
-    console.log("Otp saved:", otpBody);
+    await Otp.deleteMany({ email });
+    await Otp.create({ email, otp });
 
-    // ⚠️ in production, send OTP via email/SMS, don’t return in response
+    nodeMailer.sendMail(
+      {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Your OTP for Kodemates Education",
+        html: `
+          <h2>OTP Verification</h2>
+          <p>Your OTP is:</p>
+          <h1 style="color:#2563eb;">${otp}</h1>
+          <p>This OTP will expire in 5 minutes.</p>
+        `,
+      },
+      (err, info) => {
+        if (err) {
+          console.error("Error sending OTP email:", err);
+        } else {
+          console.log("OTP email sent:", info.response);
+        }
+      }
+    ); // ✅ properly closed
+
     return res.status(200).json({
       success: true,
       message: "OTP sent successfully.",
-      otp, 
     });
 
   } catch (error) {
@@ -45,6 +68,12 @@ exports.sendotp = async (req, res) => {
     });
   }
 };
+
+
+
+// ==========================
+// SIGNUP CONTROLLER
+// ==========================
 exports.signup = async (req, res) => {
   try {
     const {
@@ -58,29 +87,72 @@ exports.signup = async (req, res) => {
       otp,
     } = req.body;
 
-    // check password match
+    // Validate required fields
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !mobile ||
+      !password ||
+      !confirmPassword ||
+      !accountType ||
+      !otp
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required.",
+      });
+    }
+
+    // Password match check
     if (password !== confirmPassword) {
-      return res.status(403).json({ success: false, message: "Passwords do not match." });
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match.",
+      });
     }
 
-    // check if user already exists
-    const existUser = await User.findOne({ email });
-    if (existUser) {
-      return res.status(400).json({ success: false, message: "User already exists." });
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists.",
+      });
     }
 
-    // get the most recent OTP for this email
+    // Get most recent OTP
     const recentOtp = await Otp.findOne({ email }).sort({ createdAt: -1 });
-    // console.log("Recent OTP found:", recentOtp);
 
-    if (!recentOtp || otp !== recentOtp.otp) {
-      return res.status(400).json({ success: false, message: "Invalid or expired OTP." });
+    if (!recentOtp) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP not found. Please request a new one.",
+      });
     }
 
-    // hash password
+    // OTP expiry check (5 minutes)
+    const OTP_EXPIRY_TIME = 5 * 60 * 1000;
+
+    if (Date.now() - recentOtp.createdAt > OTP_EXPIRY_TIME) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP expired. Please request a new one.",
+      });
+    }
+
+    // OTP match check
+    if (otp !== recentOtp.otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP.",
+      });
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // create profile document
+    // Create profile document
     const profileDetails = await Profile.create({
       gender: "Not Specified",
       dateOfBirth: null,
@@ -88,7 +160,7 @@ exports.signup = async (req, res) => {
       contactNumber: "",
     });
 
-    // create user
+    // Create user
     const user = await User.create({
       firstName,
       lastName,
@@ -97,10 +169,11 @@ exports.signup = async (req, res) => {
       password: hashedPassword,
       accountType,
       additionaldetails: profileDetails._id,
-      // ⚠️ don't pass profilePicture here so default in schema applies
     });
 
-    // remove password before sending response
+    // Delete OTP after successful signup
+    await Otp.deleteMany({ email });
+
     const userResponse = user.toObject();
     delete userResponse.password;
 
@@ -109,12 +182,15 @@ exports.signup = async (req, res) => {
       message: "User registered successfully!",
       user: userResponse,
     });
+
   } catch (error) {
     console.error("Error during signup:", error);
-    return res.status(500).json({ success: false, message: "Signup failed." });
+    return res.status(500).json({
+      success: false,
+      message: "Signup failed. Please try again.",
+    });
   }
 };
-
 
 // ------------------ LOGIN ------------------
 exports.login = async (req, res) => {
@@ -130,9 +206,7 @@ exports.login = async (req, res) => {
 const user = await User.findOne({ email: emailClean }).populate("additionalDetails").populate("courseprogress").populate("courses");
 
 if (!user) {
-  console.log("Email searched:", emailClean);
-  console.log("Available users:", await User.find({}, "email")); // only show emails
-  return res.status(404).json({ success: false, message: "User not registered." });
+return res.status(404).json({ success: false, message: "User not registered." });
 }
 
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
 const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -11,7 +11,7 @@ const Signup = () => {
     confirmPassword: '',
     accountType: 'Student'
   });
-
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -50,46 +50,44 @@ const Signup = () => {
   };
 
 const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!validateForm()) return;
-
-  try {
-  const res = await fetch("http://localhost:5000/api/users/signup", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(formData),
-});
-
-
-     console.log(formData);
-    const data = await res.json();
-
-    if (!res.ok) {
-      // Backend error message
-      setErrors({ apiError: data.message || "Signup failed" });
+    if (!formData.email) {
+      setErrors({ email: "Email is required" });
       return;
     }
-    // Success - navigate to OTP verification page
-    navigate("/verify-otp", { state: { email: formData.email } });
-    // Reset
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      mobile: "",
-      password: "",
-      confirmPassword: "",
-      accountType: "Student"
-    });
 
-  } catch (error) {
-    console.error("Error:", error);
-    setErrors({ apiError: "Server not responding. Try again later." });
-  }
-};
+    try {
+       setIsLoading(true);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/users/sendotp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: formData.email }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrors({ apiError: data.message });
+        return;
+      }
+
+      // Save formData in localStorage (prevents refresh issue)
+      localStorage.setItem("signupData", JSON.stringify(formData));
+
+      // Navigate to OTP page
+      navigate("/VerifyOtp");
+
+    } catch (error) {
+      setErrors({ apiError: "Server not responding. Try again." });
+    }
+  };
+
 
 
   return (
@@ -244,7 +242,7 @@ const handleSubmit = async (e) => {
             type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all"
           >
-            Create Account
+            {isLoading ? "Sending Otp..." : "Create Account"}
           </button>
         </form>
 

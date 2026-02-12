@@ -11,7 +11,8 @@ import Quiz from "./Pages/Quiz";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import AdminQuiz from "./Pages/AdminQuiz";
-
+import VerifyOtp from "./Pages/VerifyOtp";
+import NotFound from "./Pages/NotFound";
 function App() {
   return (
 
@@ -20,6 +21,7 @@ function App() {
       <Routes>
 
         <Route path="/" element={<Home/>} />
+        <Route path="/VerifyOtp" element={<VerifyOtp />} />
         <Route path="/courses" element={<Courses/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path ="/signup" element={<Signup/>}/>
@@ -28,7 +30,7 @@ function App() {
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/admin-quiz" element={<AdminQuiz />} />
-        <Route path="*" element={<h1 className="text-3xl font-bold underline">404 Not Found!</h1>} />
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
       <Footer/>

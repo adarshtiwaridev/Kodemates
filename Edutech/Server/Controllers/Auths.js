@@ -5,66 +5,76 @@ const Profile = require("../Models/Profile"); // FIX: was Profiler
 const { customAlphabet } = require("nanoid");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { send } = require("vite");
 require("dotenv").config();
 
+
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 exports.sendotp = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log("Received email for OTP:", email);
 
     if (!email) {
       return res.status(400).json({
         success: false,
-        message: "Email is required.",
+        message: "Email is required",
       });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exists. Please login instead.",
-      });
-    }
+    console.log("📩 OTP request for:", email);
 
-    const generateOTP = customAlphabet("1234567890", 6);
-    const otp = generateOTP();
+    // Generate 6-digit OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
 
-    await Otp.deleteMany({ email });
-    await Otp.create({ email, otp });
+    // TODO: Save OTP to DB with expiry (recommended)
+    console.log("Generated OTP:", otp);
 
-    nodeMailer.sendMail(
-      {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "Your OTP for Kodemates Education",
-        html: `
-          <h2>OTP Verification</h2>
-          <p>Your OTP is:</p>
-          <h1 style="color:#2563eb;">${otp}</h1>
-          <p>This OTP will expire in 5 minutes.</p>
-        `,
+    // Create transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
       },
-      (err, info) => {
-        if (err) {
-          console.error("Error sending OTP email:", err);
-        } else {
-          console.log("OTP email sent:", info.response);
-        }
-      }
-    ); // ✅ properly closed
+      connectionTimeout: 10000, // 10 sec safety
+    });
+
+    const mailOptions = {
+      from: `"EdTech Platform" <${process.env.MAIL_USER}>`,
+      to: email,
+      subject: "Your OTP Code",
+      html: `
+        <div style="font-family:sans-serif;">
+          <h2>Your OTP Code</h2>
+          <p>Your verification code is:</p>
+          <h1 style="letter-spacing:4px;">${otp}</h1>
+          <p>This OTP will expire in 10 minutes.</p>
+        </div>
+      `,
+    };
+
+    // Timeout protection
+    const mailPromise = transporter.sendMail(mailOptions);
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Email sending timeout")), 10000)
+    );
+
+    await Promise.race([mailPromise, timeoutPromise]);
 
     return res.status(200).json({
       success: true,
-      message: "OTP sent successfully.",
+      message: "OTP sent successfully",
     });
 
   } catch (error) {
-    console.error("Error sending OTP:", error);
+    console.error("❌ OTP ERROR:", error);
+
     return res.status(500).json({
       success: false,
-      message: "Failed to send OTP. Please try again.",
+      message: error.message || "Failed to send OTP",
     });
   }
 };
@@ -348,3 +358,45 @@ exports.verifyOtp = async (req, res) => {
     });
   }
 };
+
+exports.resetPassword = async (req, res) => {
+  try{
+    const {email} = req.body;
+
+    if(!email){
+      return res.status(400).json({
+        success: false,
+        message: "Email is required"
+      });
+    }
+
+    const user = await User.findOne({email});
+
+    if(!user){
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    const resetToken = jwt.sign({email: user.email}, process.env.JWT_SECRET, {expiresIn: "15m"});
+
+    // Here you would send the resetToken to the user's email with a link to reset password page
+      sendEmail(
+        user.email,
+        "Password Reset Request",
+        `
+          <h2>Password Reset</h2>
+          <p>You requested a password reset. Click the link below to reset your password:</p>
+          <a href="${process.env.FRONTEND_URL}/reset-password?token=${resetToken}" style="background-color:#2563eb;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Reset Password</a>
+          <p>This link will expire in 15 minutes.</p>
+        `
+      );  
+
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset link sent to email",
+      resetToken
+    });
+  }

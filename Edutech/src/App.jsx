@@ -13,6 +13,7 @@ import Signup from "./Pages/Signup";
 import AdminQuiz from "./Pages/AdminQuiz";
 import VerifyOtp from "./Pages/VerifyOtp";
 import NotFound from "./Pages/NotFound";
+import ForgotPassword from "./Pages/ForgotPassword";
 function App() {
   return (
 
@@ -30,6 +31,7 @@ function App() {
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/admin-quiz" element={<AdminQuiz />} />
+        <Route path="/Forgot-password" element={<ForgotPassword />} />
         <Route path="*" element={<NotFound />} />
 
       </Routes>

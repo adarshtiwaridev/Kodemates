@@ -117,6 +117,18 @@ const Login = () => {
     className="mt-1 block w-full px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
   />
 
+
+<div className="flex justify-end">
+  <a
+    href="/Forgot-password"
+    className="text-sm text-blue-300 hover:text-blue-400 transition-all"
+  >
+    Forgot Password?
+  </a>
+</div>
+
+              
+
   <button
     type="button"
     onClick={() => setShowPassword(prev => !prev)}

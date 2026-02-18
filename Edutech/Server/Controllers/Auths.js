@@ -2,7 +2,6 @@
 const User = require("../Models/User");
 const Otp = require("../Models/Otp");
 const Profile = require("../Models/Profile"); // FIX: was Profiler
-const { customAlphabet } = require("nanoid");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");

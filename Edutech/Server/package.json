@@ -1,28 +1,29 @@
 {
    "name": "server",
-  "version": "1.0.0",
-  "main": "index.js",
-  "engines": {
-    "node": "20.x"
-  },
-  "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "cloudinary": "^2.7.0",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^4.21.2",
-    "express-fileupload": "^1.5.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.17.1",
-    "nodemailer": "^7.0.5",
-    "otp-generator": "^4.0.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.10"
-  }
+   "version": "1.0.0",
+   "main": "index.js",
+   "engines": {
+      "node": "20.x"
+   },
+   "scripts": {
+      "dev": "nodemon index.js",
+      "start": "node index.js"
+   },
+   "dependencies": {
+      "bcrypt": "^6.0.0",
+      "cloudinary": "^2.7.0",
+      "cookie-parser": "^1.4.7",
+      "cors": "^2.8.5",
+      "debug": "^4.4.3",
+      "dotenv": "^17.2.1",
+      "express": "^4.21.2",
+      "express-fileupload": "^1.5.2",
+      "jsonwebtoken": "^9.0.2",
+      "mongoose": "^8.17.1",
+      "nodemailer": "^7.0.5",
+      "otp-generator": "^4.0.1"
+   },
+   "devDependencies": {
+      "nodemon": "^3.1.10"
+   }
 }

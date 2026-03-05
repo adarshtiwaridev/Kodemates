@@ -26,7 +26,7 @@ const VerifyOtp = () => {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/users/signup`,
+        `http://localhost:5000/api/users/signup`,
         {
           method: "POST",
           headers: {

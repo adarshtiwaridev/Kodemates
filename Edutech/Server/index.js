@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const userRoutes = require("./routes/User");
 const profileRoutes = require("./routes/Profile");
 const courseRoutes = require("./routes/Course");
+const paymentRoutes = require("./routes/Payment");
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -27,7 +28,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",              // local Vite
-      "https://edtech-projects.vercel.app/"    // Vercel frontend
+      "http://localhost:5000",              // local dev
+      // "https://edtech-projects.vercel.app"  // Vercel frontend
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -50,6 +52,7 @@ cloudconnect();
 app.use("/api/users", userRoutes);
 app.use("/api/profiles", profileRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/payment", paymentRoutes);
 
 /* ===================== HEALTH CHECK ===================== */
 app.get("/", (req, res) => {

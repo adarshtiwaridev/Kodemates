@@ -1,63 +1,39 @@
 {
-  "name": "athani-softech",
-  "version": "0.1.0",
+  "name": "edtech-frontend",
   "private": true,
-  "dependencies": {
-    "@heroui/react": "^2.8.5",
-    "@redux-ts-starter-kit/slice": "^3.0.3-alpha.0",
-    "@reduxjs/toolkit": "^2.9.0",
-    "axios": "^1.13.5",
-    "bcryptjs": "^3.0.3",
-    "concurrently": "^9.2.1",
-    "cors": "^2.8.6",
-    "dotenv": "^17.2.4",
-    "framer-motion": "^12.23.22",
-    "jsonwebtoken": "^9.0.3",
-    "lottie-react": "^2.4.1",
-    "lucide-react": "^0.543.0",
-    "mongoose": "^9.2.1",
-    "nodemailer": "^8.0.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hot-toast": "^2.6.0",
-    "react-icons": "^5.5.0",
-    "react-redux": "^9.2.0",
-    "react-router-dom": "^6.30.1",
-    "react-toastify": "^11.0.5",
-    "redux-toolkit": "^1.1.2",
-    "web-vitals": "^2.1.4"
-  },
-  "author": "Athani Softech",
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview --port 3000",
+    "dev": "concurrently \"npm run client\" \"npm run server\"",
+    "client": "vite",
     "server": "cd Server && npm run dev",
-    "dev": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"vite\" \"npm run server\""
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.9.7",
+    "autoprefixer": "^10.4.19",
+    "axios": "^1.6.2",
+    "chart.js": "^4.4.0",
+    "framer-motion": "^12.34.5",
+    "lucide-react": "^0.576.0",
+    "nanoid": "^3.3.7",
+    "postcss": "^8.4.38",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^5.6.0",
+    "react-redux": "^8.1.3",
+    "react-router-dom": "^6.20.0",
+    "react-toastify": "^11.0.5",
+    "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.7.0",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17",
-    "vite": "^5.4.19"
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "vite": "^5.0.8"
   }
 }

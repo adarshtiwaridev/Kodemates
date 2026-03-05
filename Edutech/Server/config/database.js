@@ -1,40 +1,47 @@
-// database.js
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const dns = require("dns");
 
-// Load environment variables from .env file
+// Force Node.js to use Google DNS to resolve MongoDB SRV records
+// This bypasses the ECONNREFUSED issues common in Windows/Node 20+ environments
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
 dotenv.config();
 
-// MongoDB connection URL (from .env file) with sensible local fallback
-const MONGO_URI =
-  (process.env.MONGO_URI && process.env.MONGO_URI.trim()) ||
-  "mongodb://127.0.0.1:27017/edutech";
+// Ensure we are using the correct variable name from your .env
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URL;
 
-// Function to connect MongoDB
 const connectDB = async () => {
   try {
-    if (!MONGO_URI || typeof MONGO_URI !== "string" || MONGO_URI.trim().length === 0) {
-      console.error("❌ Mongo connection string is invalid.");
-      throw new Error("Invalid Mongo connection string");
+    if (!MONGO_URI) {
+      console.error("❌ MONGO_URI is missing from environment variables.");
+      process.exit(1);
     }
 
-    // Optional: quiet mongoose strictQuery deprecation warnings
     mongoose.set("strictQuery", true);
 
-    await mongoose.connect(MONGO_URI);
+    // Connection options for stability
+    const options = {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    };
 
-    const { host, port, name } = mongoose.connection;
-    console.log(`✅ MongoDB connected successfully → ${host}:${port}/${name}`);
+    console.log("⏳ Attempting to connect to MongoDB...");
+    await mongoose.connect(MONGO_URI, options);
 
-    mongoose.connection.on("error", (err) => {
-      console.error("❌ MongoDB runtime connection error:", err?.message || err);
-    });
-    mongoose.connection.on("disconnected", () => {
-      console.warn("⚠️  MongoDB disconnected. Retrying might be necessary.");
-    });
+    const { host, name } = mongoose.connection;
+    console.log(`✅ MongoDB connected successfully!`);
+    console.log(`📡 Host: ${host}`);
+    console.log(`📂 Database: ${name}`);
+
   } catch (error) {
-    console.error("❌ MongoDB connection failed:", error.message);
-    throw error;
+    console.error("❌ MongoDB connection failed!");
+    console.error(`Reason: ${error.message}`);
+    
+    if (error.message.includes("ECONNREFUSED")) {
+      console.error("💡 TIP: This is a DNS issue. Verify your IP is whitelisted in Atlas (0.0.0.0/0).");
+    }
+    
+    process.exit(1); 
   }
 };
 

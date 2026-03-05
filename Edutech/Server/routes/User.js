@@ -17,22 +17,20 @@ const {
 
 const { auth } = require("../middleware/Auth");
 
-// 🚨 Validate middleware/controllers once (SAFE)
+/* ================= SAFETY CHECK ================= */
+
 if (typeof auth !== "function") {
   throw new Error("auth middleware is not a function");
 }
 
 /* ================= AUTH ROUTES ================= */
-
-router.post("/login", login);
-router.post("/signup", signup);
-
 router.post("/login", login);
 router.post("/signup", signup);
 router.post("/sendotp", sendotp);
 router.post("/logout", logout);
 router.post("/verify-otp", verifyOtp);
-/* ================= PASSWORD ================= */
+
+/* ================= PASSWORD ROUTES ================= */
 
 router.put("/changePassword", auth, changePassword);
 router.post("/resetPasswordToken", resetPasswordToken);

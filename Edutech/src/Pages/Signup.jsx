@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+
 const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -59,8 +60,8 @@ const handleSubmit = async (e) => {
 
     try {
        setIsLoading(true);
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/users/sendotp`,
+      const res = await fetch(`http://localhost:5000/api/users/sendotp`,
+        // `${import.meta.env.VITE_API_URL}/api/users/sendotp`,
         {
           method: "POST",
           headers: {

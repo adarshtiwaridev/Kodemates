@@ -1,4 +1,5 @@
 // controllers/Auth.js
+
 const User = require("../Models/User");
 const Otp = require("../Models/Otp");
 const Profile = require("../Models/Profile"); // FIX: was Profiler
@@ -62,6 +63,11 @@ exports.sendotp = async (req, res) => {
     );
 
     await Promise.race([mailPromise, timeoutPromise]);
+
+      // Save OTP to DB (optional but recommended)
+      console.log("Saving OTP to DB for:", email);
+    await Otp.create({ email, otp });
+    console.log("OTP saved to DB for:", email);
 
     return res.status(200).json({
       success: true,

@@ -1,6 +1,5 @@
 
-
-Perfect bro 🔥 this one’s gonna look super professional — a complete README for your Kodemates Education – EdTech Platform, with description, features, tech stack, setup guide, and topic list formatted perfectly for GitHub 🚀
+Perfect bro 🔥 this one’s gonna look super professional — a complete README for your Kodemates Education – EdTech Platform,  with description, features, tech stack, setup guide, and topic list formatted perfectly for GitHub 🚀
 
 🎓 Kodemates Education – Full-Stack EdTech Platform
 💡 Overview
@@ -26,7 +25,7 @@ This platform aims to bridge the gap between education and technology, empowerin
 📄 Certificate generation after course completion
 
 💬 Blog system & live chat support
-
+ 
 🔒 JWT authentication & role-based routing
 
 🧠 Tech Stack

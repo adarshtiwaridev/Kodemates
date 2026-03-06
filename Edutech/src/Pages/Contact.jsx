@@ -16,12 +16,36 @@ const Contact = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitted(true);
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    setTimeout(() => setIsSubmitted(false), 5000);
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch("http://localhost:5000/api/users/contactus", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    });
+  console.log("Response status:", response.status);
+    const data = await response.json();
+
+    if (data.success) {
+      setIsSubmitted(true);
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+      });
+
+      setTimeout(() => setIsSubmitted(false), 5000);
+    }
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -143,8 +167,8 @@ const Contact = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Info Cards */}
               {[
-                { icon: MapPin, title: "Headquarters", detail: "80 Brooklyn St, NY 11201" },
-                { icon: Phone, title: "Direct Line", detail: "+1 (555) 123-4567" },
+                { icon: MapPin, title: "Headquarters", detail: "New Delhi, India" },
+                { icon: Phone, title: "Direct Line", detail: "+91 94733362794" },
                 { icon: Mail, title: "Support Email", detail: "help@edutech.com" },
                 { icon: Clock, title: "Opening Hours", detail: "Mon-Fri: 9AM - 6PM" },
               ].map((item, idx) => (
@@ -161,7 +185,7 @@ const Contact = () => {
               <div className="absolute inset-0 bg-blue-600/5 pointer-events-none z-10" />
               <iframe
                 title="Google Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.221990125237!2d-74.00369368400567!3d40.71312937933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a47df06b185%3A0xc88184715dcc7ecd!2sBrooklyn%20Bridge!5e0!3m2!1sen!2sus!4v1647100000000!5m2!1sen!2sus"
+src="https://www.google.com/maps?q=New+Delhi,India&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0, filter: 'grayscale(0.5) contrast(1.2) invert(0)' }} // You can toggle invert(1) for dark mode

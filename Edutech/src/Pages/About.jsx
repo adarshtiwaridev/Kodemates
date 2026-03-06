@@ -30,9 +30,9 @@ const About = () => {
   };
 
   const stats = [
-    { value: '50K+', label: 'Global Students', icon: <GraduationCap size={28} /> },
-    { value: '500+', label: 'Industry Experts', icon: <Users size={28} /> },
-    { value: '100+', label: 'Countries Reach', icon: <Globe size={28} /> },
+    { value: '1K+', label: 'Global Students', icon: <GraduationCap size={28} /> },
+    { value: '5+', label: 'Industry Experts', icon: <Users size={28} /> },
+    { value: '2+', label: 'Countries Reach', icon: <Globe size={28} /> },
     { value: '95%', label: 'Success Rate', icon: <Award size={28} /> },
   ];
 

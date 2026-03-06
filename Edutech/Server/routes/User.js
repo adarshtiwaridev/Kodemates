@@ -15,6 +15,9 @@ const {
   resetPassword,
 } = require("../Controllers/Resetpassword");
 
+
+const { createContactus } = require("../Controllers/Contactus");
+
 const { auth } = require("../middleware/Auth");
 
 /* ================= SAFETY CHECK ================= */
@@ -29,11 +32,13 @@ router.post("/signup", signup);
 router.post("/sendotp", sendotp);
 router.post("/logout", logout);
 router.post("/verify-otp", verifyOtp);
-
+router.post("/contactus", createContactus);
 /* ================= PASSWORD ROUTES ================= */
 
 router.put("/changePassword", auth, changePassword);
 router.post("/resetPasswordToken", resetPasswordToken);
 router.post("/resetPassword", resetPassword);
+
+
 
 module.exports = router;

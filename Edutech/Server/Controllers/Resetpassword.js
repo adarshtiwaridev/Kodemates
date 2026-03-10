@@ -32,8 +32,7 @@ const crypto = require("crypto");
       { new: true }
     );
 
-    // frontend reset URL
-    const url = `http://localhost:3000/update-password/${token}`;
+const url = `http://localhost:5173/reset-password/${token}`;
 
     // send mail
     await sendEmail(

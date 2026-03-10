@@ -37,7 +37,7 @@ router.post("/contactus", createContactus);
 
 router.put("/changePassword", auth, changePassword);
 router.post("/resetPasswordToken", resetPasswordToken);
-router.post("/resetPassword", resetPassword);
+router.post("/resetPassword/:token", resetPassword);
 
 
 

@@ -23,13 +23,14 @@ const Footer = () => {
 
           {/* Column 1: Brand & Identity */}
           <div className="space-y-8">
-            <Link to="/" className="inline-block transition-transform hover:scale-105">
-              <img
-                src="/Images/logo2.png" // Using the same logo as Navbar
-                alt="EduLerns Logo"
-                className="w-32 h-auto dark:brightness-200"
-              />
-            </Link>
+               <Link to="/" className="relative group">
+                       <img 
+                         src="/Images/logo2.png" 
+                         alt="Logo" 
+                         className="w-24 h-auto dark:invert dark:brightness-200 transition-all duration-300" 
+                       />
+                     </Link>
+           
             
             <p className="text-gray-500 dark:text-neutral-400 text-sm leading-relaxed max-w-xs">
               Empowering learners worldwide with over 26,000 premium courses taught by industry experts. Your future starts here.

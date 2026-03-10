@@ -17,7 +17,8 @@ import ForgotPassword from "./Pages/ForgotPassword";
 // dashboard route added to support profile links/navigation
 import Dashboard from "./Pages/Dashbord";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import Setting from "./Pages/dashbaord/Setting";
+import ResetPassword from "./Pages/ResetPassword";
 function App() {
   return (
 
@@ -36,6 +37,16 @@ function App() {
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/admin-quiz" element={<AdminQuiz />} />
         <Route path="/Forgot-password" element={<ForgotPassword />} />
+        <Route path="/dashboard/my-profile" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/setting" element={
+          <ProtectedRoute>
+            <Setting />
+          </ProtectedRoute>
+        } />
 
         {/* dashboard route (lowercase) wrapped in auth guard */}
         <Route
@@ -49,7 +60,11 @@ function App() {
 
         <Route path="*" element={<NotFound />} />
 
+        {/* The :token part allows the component to read the unique ID from the email link */}
+   <Route path="/reset-password/:token" element={<ResetPassword />} />
+
       </Routes>
+      {/* <Contact/> */}
       <Footer/>
     </div>
 

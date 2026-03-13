@@ -8,6 +8,8 @@ const {
   logout,
   changePassword,
   verifyOtp,
+
+  deleteAccount,
 } = require("../Controllers/Auths");
 
 const {
@@ -27,12 +29,16 @@ if (typeof auth !== "function") {
 }
 
 /* ================= AUTH ROUTES ================= */
+
 router.post("/login", login);
 router.post("/signup", signup);
 router.post("/sendotp", sendotp);
 router.post("/logout", logout);
 router.post("/verify-otp", verifyOtp);
 router.post("/contactus", createContactus);
+
+router.post("/deleteAccount",  deleteAccount);
+
 /* ================= PASSWORD ROUTES ================= */
 
 router.put("/changePassword", auth, changePassword);

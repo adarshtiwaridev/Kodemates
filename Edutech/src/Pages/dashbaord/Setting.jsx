@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { User, Lock, RefreshCcw, Sun, Moon, Trash2, ChevronDown, Mail, CheckCircle, AlertCircle, ShieldAlert } from "lucide-react";
+import { useSelector } from "react-redux";
+
 
 // ==========================================
 // 1. SUB-FORM COMPONENTS (Internal Logic)
@@ -63,22 +65,8 @@ const ProfileForm = () => {
   );
 };
 
-const PasswordForm = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Password Change logic triggered");
-  };
+// ==========================================
 
-  return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <input type="password" placeholder="Current Password" className="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-xl p-3 focus:ring-2 focus:ring-green-500 outline-none" />
-      <input type="password" placeholder="New Password" className="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-xl p-3 focus:ring-2 focus:ring-green-500 outline-none" />
-      <button className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl transition-all">
-        Update Password
-      </button>
-    </form>
-  );
-};
 
 const ResetTokenForm = () => {
   const [email, setEmail] = useState("");
@@ -136,9 +124,36 @@ export default function Settings() {
     document.documentElement.classList.toggle("dark");
   };
 
+const token = useSelector((state) => state.auth.token);
+  const email = useSelector((state) => state.auth.user?.email);
+
+  const handleDeleteAccount = async () => {
+
+    try {
+
+      const response = await fetch(
+        "http://localhost:5000/api/users/deleteAccount",
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+
+    } catch (error) {
+      console.error("Error deleting account:", error.message);
+    }
+  };
+
+  
   const sections = [
     { id: "profile", label: "Update Profile", icon: <User size={20} />, color: "text-blue-500", component: <ProfileForm /> },
-    { id: "password", label: "Change Password", icon: <Lock size={20} />, color: "text-green-500", component: <PasswordForm /> },
     { id: "reset", label: "Reset Password", icon: <RefreshCcw size={20} />, color: "text-purple-500", component: <ResetTokenForm /> },
   ];
 
@@ -192,7 +207,7 @@ export default function Settings() {
             </div>
           </div>
 
-
+   
   
 {/* Danger Zone (Static) */}
 <div className="overflow-hidden rounded-2xl border border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10 p-6">

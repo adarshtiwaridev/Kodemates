@@ -406,3 +406,136 @@ exports.resetPassword = async (req, res) => {
     });
   }
 };
+
+// delete account
+exports.deleteAccount = async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({
+        success: false,
+        message: "Authorization token missing",
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+ console.log("Delete account request with token:", token);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const email = decoded.email;
+
+    const user = await User.findOneAndDelete({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // delete profile if exists
+    if (user.additionaldetails) {
+      await Profile.findByIdAndDelete(user.additionaldetails);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Account deleted successfully",
+    });
+
+  } catch (error) {
+    console.error("Delete Account Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error during account deletion",
+    });
+  }
+};
+
+// admin delete account
+exports.deleteAccountByAdmin = async (req, res) => {
+  try {     
+
+    const { email } = req.body;
+     console.log("Delete account request for:", email);
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const user = await User.findOneAndDelete({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Also delete associated profile
+    await Profile.findByIdAndDelete(user.additionaldetails);
+
+    return res.status(200).json({
+      success: true,
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Account Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during account deletion",
+    });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+exports.deleteAccountByAdmin = async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const user = await User.findOneAndDelete({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Also delete associated profile
+    await Profile.findByIdAndDelete(user.additionaldetails);
+
+    return res.status(200).json({
+      success: true,
+      message: "Account deleted successfully by admin",
+    });
+  } catch (error) {
+    console.error("Admin Delete Account Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during account deletion by admin",
+    });
+  }
+};

@@ -7,6 +7,8 @@ const profileRoutes = require("./routes/Profile");
 const courseRoutes = require("./routes/Course");
 const paymentRoutes = require("./routes/Payment");
 
+
+
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const cloudconnect = require("./config/cloudinary");
@@ -28,7 +30,7 @@ app.use(
     origin: [
       "http://localhost:5173",              // local Vite
       "http://localhost:5000",              // local dev
-      // "https://edtech-projects.vercel.app"  // Vercel frontend
+      //  "https://edtech-projects.vercel.app"  // Vercel frontend
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],

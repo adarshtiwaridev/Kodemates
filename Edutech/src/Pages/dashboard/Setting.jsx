@@ -102,6 +102,7 @@ const ResetTokenForm = () => {
 export default function Settings() {
   const [openSection, setOpenSection] = useState("profile");
   const [theme, setTheme] = useState("light");
+  const [islogin, setIslogin] = useState(true);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -119,7 +120,7 @@ const handleDeleteAccount = async () => {
   try {
 
     const response = await fetch(
-   fetch(`http://localhost:5000/api/users/resetPasswordToken`, 
+      `http://localhost:5000/api/users/deleteAccount`,
       {
         method: "DELETE",
         headers: {
@@ -130,9 +131,17 @@ const handleDeleteAccount = async () => {
     );
 
     const data = await response.json();
-    console.log(data);
-  toast.success("Account deleted successfully!");
+   if (response.ok) {
+      toast.success("Account deleted successfully!");
 
+      // clear local storage
+      localStorage.clear();
+
+      // redirect to login page
+      window.location.href = "/login";
+    } else {
+      toast.error(data.message || "Failed to delete account");
+    }
     setShowDeletePopup(false);
 
   } catch (error) {
@@ -197,7 +206,6 @@ const handleDeleteAccount = async () => {
           </div>
 <button
   onClick={() => setShowDeletePopup(true)}
-
   className="bg-red-600 hover:bg-red-700 active:scale-95 text-white font-semibold py-2.5 px-6 rounded-xl transition-all shadow-md"
 >
   Delete My Account

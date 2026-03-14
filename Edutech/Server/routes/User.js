@@ -37,7 +37,7 @@ router.post("/logout", logout);
 router.post("/verify-otp", verifyOtp);
 router.post("/contactus", createContactus);
 
-router.post("/deleteAccount",  deleteAccount);
+router.delete("/deleteAccount",  deleteAccount);
 
 /* ================= PASSWORD ROUTES ================= */
 

@@ -74,7 +74,8 @@ exports.sendotp = async (req, res) => {
       message: "OTP sent successfully",
     });
 
-  } catch (error) {
+  } 
+  catch (error) {
     console.error("❌ OTP ERROR:", error);
 
     return res.status(500).json({
@@ -102,24 +103,13 @@ exports.signup = async (req, res) => {
       otp,
     } = req.body;
 
-    // Validate required fields
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !mobile ||
-      !password ||
-      !confirmPassword ||
-      !accountType ||
-      !otp
-    ) {
+    if (!firstName || !lastName || !email || !mobile || !password || !confirmPassword || !accountType || !otp) {
       return res.status(400).json({
         success: false,
         message: "All fields are required.",
       });
     }
 
-    // Password match check
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
@@ -127,7 +117,6 @@ exports.signup = async (req, res) => {
       });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -136,46 +125,43 @@ exports.signup = async (req, res) => {
       });
     }
 
-    // Get most recent OTP
     const recentOtp = await Otp.findOne({ email }).sort({ createdAt: -1 });
 
     if (!recentOtp) {
       return res.status(400).json({
         success: false,
-        message: "OTP not found. Please request a new one.",
+        message: "OTP not found.",
       });
     }
 
-    // OTP expiry check (5 minutes)
     const OTP_EXPIRY_TIME = 5 * 60 * 1000;
 
-    if (Date.now() - recentOtp.createdAt > OTP_EXPIRY_TIME) {
+    if (Date.now() - recentOtp.createdAt.getTime() > OTP_EXPIRY_TIME) {
       return res.status(400).json({
         success: false,
-        message: "OTP expired. Please request a new one.",
+        message: "OTP expired.",
       });
     }
 
-    // OTP match check
-    if (otp !== recentOtp.otp) {
+    if (Number(otp) !== Number(recentOtp.otp)) {
       return res.status(400).json({
         success: false,
         message: "Invalid OTP.",
       });
     }
 
-    // Hash password
+    // 🔐 Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create profile document
+    // 👤 Create profile
     const profileDetails = await Profile.create({
       gender: "Not Specified",
       dateOfBirth: null,
       address: "",
-      contactNumber: "",
+      contactNumber: mobile,
     });
 
-    // Create user
+    // 👤 Create user
     const user = await User.create({
       firstName,
       lastName,
@@ -183,10 +169,9 @@ exports.signup = async (req, res) => {
       mobile,
       password: hashedPassword,
       accountType,
-      additionaldetails: profileDetails._id,
+      additionalDetails: profileDetails._id,
     });
 
-    // Delete OTP after successful signup
     await Otp.deleteMany({ email });
 
     const userResponse = user.toObject();
@@ -200,9 +185,10 @@ exports.signup = async (req, res) => {
 
   } catch (error) {
     console.error("Error during signup:", error);
+
     return res.status(500).json({
       success: false,
-      message: "Signup failed. Please try again.",
+      message: error.message,
     });
   }
 };
@@ -439,7 +425,8 @@ exports.deleteAccount = async (req, res) => {
     if (user.additionaldetails) {
       await Profile.findByIdAndDelete(user.additionaldetails);
     }
-
+    localStorage.removeItem("token");
+    this.logout();
     return res.status(200).json({
       success: true,
       message: "Account deleted successfully",

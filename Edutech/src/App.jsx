@@ -17,7 +17,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 // dashboard route added to support profile links/navigation
 import Dashboard from "./Pages/Dashbord";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Setting from "./Pages/dashbaord/Setting";
+import Setting from "./Pages/dashboard/Setting";
 import ResetPassword from "./Pages/ResetPassword";
 function App() {
   return (

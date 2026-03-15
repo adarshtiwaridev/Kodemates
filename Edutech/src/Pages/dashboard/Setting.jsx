@@ -9,23 +9,71 @@ import { useState } from "react";
 // 1. SUB-FORM COMPONENTS (Internal Logic)
 // ==========================================
 
+
+import axios from 'axios'; // Assuming you use axios for API calls
+
 const ProfileForm = () => {
   const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "" });
+  const [imageFile, setImageFile] = useState(null);
+  const [previewSource, setPreviewSource] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = (e) => {
+  // Handle Image Selection & Preview
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => setPreviewSource(reader.result);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
-    // Simulate API Call
-    setTimeout(() => {
-      console.log("Profile Updated:", formData);
+
+    try {
+      // 1. Prepare FormData (Required for file uploads)
+      const data = new FormData();
+      data.append("displayPicture", imageFile);
+      // data.append("firstName", formData.firstName); // If sending all at once
+
+      // 2. Call your backend endpoint
+      const response = await axios.put( `http://localhost:5000/api/Profile/updateDisplayPicture`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.data.success) {
+        toast.success("Profile updated successfully!");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to upload image.");
+    } finally {
       setIsSaving(false);
-      toast.success("Profile updated successfully!");
-    }, 1000);
+    }
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      {/* Profile Picture Upload Section */}
+      <div className="flex flex-col items-center space-y-3">
+        <div className="w-24 h-24 rounded-full overflow-hidden bg-slate-200 border-2 border-blue-500">
+          {previewSource ? (
+            <img src={previewSource} alt="preview" className="w-full h-full object-cover" />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400 text-xs">No Image</div>
+          )}
+        </div>
+        <input 
+          type="file" 
+          accept="image/*"
+          onChange={handleFileChange}
+          className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input 
           type="text" placeholder="First Name" 
@@ -38,18 +86,16 @@ const ProfileForm = () => {
           onChange={(e) => setFormData({...formData, lastName: e.target.value})}
         />
       </div>
-      <input 
-        type="email" placeholder="Email Address" 
-        className="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-        onChange={(e) => setFormData({...formData, email: e.target.value})}
-      />
-      <button className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-500/20">
+
+      <button 
+        disabled={isSaving}
+        className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
+      >
         {isSaving ? "Saving..." : "Save Profile"}
       </button>
     </form>
   );
 };
-
 // ==========================================
 
 
@@ -104,6 +150,8 @@ export default function Settings() {
   const [theme, setTheme] = useState("light");
   const [islogin, setIslogin] = useState(true);
 
+
+
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -134,11 +182,17 @@ const handleDeleteAccount = async () => {
    if (response.ok) {
       toast.success("Account deleted successfully!");
 
-      // clear local storage
+  // Remove token
+      localStorage.removeItem("token");
+
+      // Clear Redux state
+      dispatch(logout());
+
+      // Clear all stored data
       localStorage.clear();
 
-      // redirect to login page
-      window.location.href = "/login";
+      // Redirect to login
+      navigate("/login");
     } else {
       toast.error(data.message || "Failed to delete account");
     }
@@ -190,10 +244,10 @@ const handleDeleteAccount = async () => {
           <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1e293b] shadow-sm p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <span className="text-yellow-500">{theme === "light" ? <Sun size={20} /> : <Moon size={20} />}</span>
+                <span className="text-yellow-500">{theme === "light" ? <Moon size={20} /> : <Sun size={20} />}</span>
                 <div>
                   <p className="font-semibold text-lg">Theme Settings</p>
-                  <p className="text-sm text-slate-500">Currently using {theme} mode</p>
+                  <p className="text-sm text-slate-500">Turn  {theme} mode</p>
                 </div>
               </div>
               <button

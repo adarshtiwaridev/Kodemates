@@ -126,7 +126,7 @@ const Home = () => {
             {categories.map((cat, idx) => (
               <div
                 key={idx}
-                className="group p-8 rounded-[2rem] bg-white dark:bg-black border border-gray-100 dark:border-neutral-800 hover:border-blue-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/5"
+                className="group p-8 rounded-[2rem] hover:border-2 hover:border-blue-500 bg-white dark:bg-black border-neutral-800 border-gray-100   transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/5"
               >
                 <div className={`${cat.color} mb-6 transition-transform group-hover:scale-110 duration-500`}>
                   {cat.icon}

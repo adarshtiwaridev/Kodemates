@@ -41,6 +41,7 @@ const Dashboard = () => {
     );
   }
 
+  
   return (
     <div className={`min-h-screen transition-colors duration-300 ${themeClass} p-4 md:p-8 font-sans`}>
       {/* Header */}
@@ -78,6 +79,7 @@ const Dashboard = () => {
             />
           </div>
           <h2 className="mt-6 text-xl font-bold">{userData?.firstName} {userData?.lastName}</h2>
+          <h2 className="text-sm text-slate-500">{userData?.email}</h2>
           <span className="px-3 py-1 mt-2 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
             {userData?.accountType?.toUpperCase()}
           </span>

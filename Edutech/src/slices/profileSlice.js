@@ -5,7 +5,7 @@ export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await fetch("http://localhost:5000/api/usersprofile/getUserDetails", {
+      const res = await fetch(`http://localhost:5000/api/profiles/getUserDetails`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }

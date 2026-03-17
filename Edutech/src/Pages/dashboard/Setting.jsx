@@ -11,94 +11,102 @@ import { useState } from "react";
 
 
 import axios from 'axios'; // Assuming you use axios for API calls
-
+// ==========================
+// PROFILE FORM COMPONENT (FIXED)
+// ==========================
 const ProfileForm = () => {
-  const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "" });
   const [imageFile, setImageFile] = useState(null);
   const [previewSource, setPreviewSource] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-
-  // Handle Image Selection & Preview
+ const token =useSelector((state)=>state.auth.token);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => setPreviewSource(reader.result);
+      setPreviewSource(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSaving(true);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      // 1. Prepare FormData (Required for file uploads)
-      const data = new FormData();
-      data.append("displayPicture", imageFile);
-      // data.append("firstName", formData.firstName); // If sending all at once
+  if (!imageFile) {
+    toast.error("Please select an image");
+    return;
+  }
 
-      // 2. Call your backend endpoint
-      const response = await axios.put( `http://localhost:5000/api/Profile/updateDisplayPicture`, data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+  setIsSaving(true);
 
-      if (response.data.success) {
-        toast.success("Profile updated successfully!");
+  try {
+    const formData = new FormData();
+    formData.append("displayPicture", imageFile);
+
+    const response = await axios.put(
+      "http://localhost:5000/api/profiles/updateDisplayPicture",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to upload image.");
-    } finally {
-      setIsSaving(false);
+    );
+
+    if (response.data.success) {
+      toast.success("Profile picture updated!");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    toast.error("Upload failed");
+  } finally {
+    setIsSaving(false);
+  }
+};
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
-      {/* Profile Picture Upload Section */}
-      <div className="flex flex-col items-center space-y-3">
-        <div className="w-24 h-24 rounded-full overflow-hidden bg-slate-200 border-2 border-blue-500">
+      
+      <div className="flex flex-col items-center space-y-4">
+        <div className="w-28 h-28 rounded-full overflow-hidden bg-slate-200 border-2 border-blue-500 shadow-md">
           {previewSource ? (
-            <img src={previewSource} alt="preview" className="w-full h-full object-cover" />
+            <img
+              src={previewSource}
+              alt="preview"
+              className="w-full h-full object-cover"
+            />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-400 text-xs">No Image</div>
+            <div className="flex items-center justify-center h-full text-gray-400 text-xs">
+              No Image
+            </div>
           )}
         </div>
-        <input 
-          type="file" 
+
+        <input
+          type="file"
           accept="image/*"
           onChange={handleFileChange}
-          className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          className="text-sm text-slate-500 
+          file:mr-4 file:py-2 file:px-4 
+          file:rounded-full file:border-0 
+          file:text-sm file:font-semibold 
+          file:bg-blue-50 file:text-blue-700 
+          hover:file:bg-blue-100 cursor-pointer"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input 
-          type="text" placeholder="First Name" 
-          className="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-          onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-        />
-        <input 
-          type="text" placeholder="Last Name" 
-          className="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-          onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-        />
+      <div className="flex justify-center">
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
+        >
+          {isSaving ? "Uploading..." : "Update Profile Picture"}
+        </button>
       </div>
 
-      <button 
-        disabled={isSaving}
-        className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
-      >
-        {isSaving ? "Saving..." : "Save Profile"}
-      </button>
     </form>
   );
 };
-// ==========================================
-
-
 const ResetTokenForm = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");

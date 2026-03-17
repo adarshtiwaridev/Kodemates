@@ -66,7 +66,6 @@ exports.updateProfile = async (req, res) => {
 
 // ==========================
 // Update Display Picture
-// ==========================
 exports.updateDisplayPicture = async (req, res) => {
   try {
     const displayPicture = req.files?.displayPicture;
@@ -82,13 +81,15 @@ exports.updateDisplayPicture = async (req, res) => {
     // Upload to Cloudinary
     const uploadResult = await cloudinary.uploader.upload(
       displayPicture.tempFilePath,
-      { folder: "user_profile_pictures" }
+      {
+        folder: "user_profile_pictures",
+      }
     );
 
     const profilePicUrl = uploadResult.secure_url;
 
-    // Update user with Cloudinary URL
-    const userDetails = await user.findByIdAndUpdate(
+    // Update DB
+    const updatedUser = await user.findByIdAndUpdate(
       userId,
       { profilePicture: profilePicUrl },
       { new: true }
@@ -97,14 +98,15 @@ exports.updateDisplayPicture = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Display picture updated successfully",
-      data: userDetails,
+      data: updatedUser,
     });
+
   } catch (error) {
     console.error("Error updating display picture:", error);
+
     return res.status(500).json({
       success: false,
-      message: "Something went wrong while updating display picture",
-      error: error.message,
+      message: "Something went wrong",
     });
   }
 };

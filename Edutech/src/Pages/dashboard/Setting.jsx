@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { setUser } from "../../slices/authSlice";
 import { logout } from "../../slices/authSlice";
 // ==========================================
 // 1. SUB-FORM COMPONENTS (Internal Logic)
@@ -21,7 +22,7 @@ const ProfileForm = () => {
       const dispatch = useDispatch();
   // Accessing profile and token from Redux store
 
-  const {user}= useSelector((state) => state.profile.user);
+const user = useSelector((state) => state.auth.user);
   
  const token =useSelector((state)=>state.auth.token);
   const handleFileChange = (e) => {
@@ -57,12 +58,15 @@ const ProfileForm = () => {
       }
     );
 
-        //  dispatch(setUser(response.data.user)); 
     if (response.data.success) {
+      // Update Redux store with the updated user from server response
+      dispatch(setUser(response.data.updatedUser || response.data.user));
       toast.success("Profile picture updated!");
+      setImageFile(null);
+      setPreviewSource(null);
+    } else {
+      toast.error("Upload failed");
     }
-    setImageFile(null);
-    setPreviewSource(null);
   } catch (error) {
     console.error(error);
     toast.error("Upload failed");
@@ -77,11 +81,11 @@ const ProfileForm = () => {
       <div className="flex flex-col items-center space-y-4">
         <div className="w-28 h-28 rounded-full overflow-hidden bg-slate-200 border-2 border-blue-500 shadow-md">
           {previewSource ? (
-            <img
-              src={previewSource || user?.profilePicture}
-              alt="preview"
-              className="w-full h-full object-cover"
-            />
+         <img
+  src={previewSource || `${user?.profilePicture}?t=${Date.now()}`}
+  alt="profile"
+  className="w-full h-full object-cover"
+/>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400 text-xs">
             </div>

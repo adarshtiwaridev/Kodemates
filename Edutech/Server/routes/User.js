@@ -21,6 +21,7 @@ const {
 const { createContactus } = require("../Controllers/Contactus");
 
 const { auth } = require("../middleware/Auth");
+const rateLimit = require("../middleware/rateLimit");
 
 /* ================= SAFETY CHECK ================= */
 
@@ -35,7 +36,7 @@ router.post("/signup", signup);
 router.post("/sendotp", sendotp);
 router.post("/logout", logout);
 router.post("/verify-otp", verifyOtp);
-router.post("/contactus", createContactus);
+router.post("/contactus", rateLimit, createContactus);
 
 router.delete("/deleteAccount",  deleteAccount);
 

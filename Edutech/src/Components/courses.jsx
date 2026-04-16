@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Filter, 
@@ -11,6 +13,8 @@ import {
   LayoutGrid,
   List
 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { addToCart } from '../slices/cartSlices';
 
 const dummyCourses = [
   { id: 1, title: 'React Modern Architecture', instructor: 'John Doe', price: 49, rating: 4.8, students: '12k', level: 'Intermediate', image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&auto=format&fit=crop' },
@@ -22,8 +26,21 @@ const dummyCourses = [
 ];
 
 const Courses = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { token } = useSelector((state) => state.auth || {});
+  const cartItems = useSelector((state) => state.cart?.cartItems || []);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewType, setViewType] = useState('grid'); // 'grid' or 'list'
+
+  const handleAddToCart = (course) => {
+    if (!token) {
+      toast.error('Please login to add items in cart');
+      navigate('/login');
+      return;
+    }
+    dispatch(addToCart(course));
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors duration-500 py-20 px-6">
@@ -67,7 +84,9 @@ const Courses = () => {
 
         {/* Course Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {dummyCourses.map((course, idx) => (
+          {dummyCourses.map((course, idx) => {
+            const existingCartItem = cartItems.find((item) => item.id === course.id);
+            return (
             <motion.div
               key={course.id}
               initial={{ opacity: 0, y: 30 }}
@@ -119,13 +138,23 @@ const Courses = () => {
                     <span className="text-2xl font-black text-black dark:text-white">${course.price}</span>
                   </div>
                   
-                  <button className="flex items-center justify-center w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                  <button
+                    onClick={() => handleAddToCart(course)}
+                    className="flex items-center justify-center w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300"
+                    aria-label="Add course to cart"
+                  >
                     <ArrowUpRight size={22} />
                   </button>
                 </div>
+                {existingCartItem && (
+                  <p className="mt-3 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    In cart: {existingCartItem.quantity}
+                  </p>
+                )}
               </div>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Load More Realistic Button */}

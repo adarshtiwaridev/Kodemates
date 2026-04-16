@@ -9,6 +9,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./reducers";
 
 import { Toaster } from "react-hot-toast";
+import { Toaster as SonnerToaster } from "sonner";
 
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
@@ -38,6 +39,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <BrowserRouter>
           <App />
           <Toaster />
+          <SonnerToaster richColors position="top-right" />
         </BrowserRouter>
       </PersistGate>
     </Provider>

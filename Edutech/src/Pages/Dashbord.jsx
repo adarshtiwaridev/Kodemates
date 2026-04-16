@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { User, Mail, Phone, Shield, BookOpen, Clock, Sun, Moon } from 'lucide-react';
+import { User, Mail, Phone, Shield, BookOpen, Clock, Sun, Moon, ShoppingCart } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchProfile } from '../slices/profileSlice';
@@ -61,15 +61,25 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* theme toggle pill (same as navbar) */}
-        <div 
-          onClick={toggleTheme}
-          className="relative w-14 h-7 bg-gray-200 dark:bg-neutral-800 rounded-full cursor-pointer p-1 transition-colors duration-500 ring-1 ring-inset ring-black/5 dark:ring-white/10"
-        >
-          <div className={`absolute top-1 left-1 w-5 h-5 rounded-full shadow-md transform transition-transform duration-500 flex items-center justify-center ${
-            isDark ? "translate-x-7 bg-blue-600" : "translate-x-0 bg-white"
-          }`}>
-            {isDark ? <Moon size={12} className="text-white" /> : <Sun size={12} className="text-yellow-500" />}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/dashboard/cart')}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
+          >
+            <ShoppingCart size={16} />
+            Open Cart
+          </button>
+
+          {/* theme toggle pill (same as navbar) */}
+          <div 
+            onClick={toggleTheme}
+            className="relative w-14 h-7 bg-gray-200 dark:bg-neutral-800 rounded-full cursor-pointer p-1 transition-colors duration-500 ring-1 ring-inset ring-black/5 dark:ring-white/10"
+          >
+            <div className={`absolute top-1 left-1 w-5 h-5 rounded-full shadow-md transform transition-transform duration-500 flex items-center justify-center ${
+              isDark ? "translate-x-7 bg-blue-600" : "translate-x-0 bg-white"
+            }`}>
+              {isDark ? <Moon size={12} className="text-white" /> : <Sun size={12} className="text-yellow-500" />}
+            </div>
           </div>
         </div>
       </header>

@@ -16,9 +16,17 @@ import NotFound from "./Pages/NotFound";
 import ForgotPassword from "./Pages/ForgotPassword";
 // dashboard route added to support profile links/navigation
 import Dashboard from "./Pages/Dashbord";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import RoleGuard from "./Components/dashboard/RoleGuard";
 import Setting from "./Pages/dashboard/Setting";
 import ResetPassword from "./Pages/ResetPassword";
+import Cart from "./Pages/dashboard/Cart";
+import TeacherCoursesPage from "./Pages/dashboard/teacher/TeacherCoursesPage";
+import TeacherCourseFormPage from "./Pages/dashboard/teacher/TeacherCourseFormPage";
+import StudentBrowseCoursesPage from "./Pages/dashboard/student/StudentBrowseCoursesPage";
+import StudentCourseDetailsPage from "./Pages/dashboard/student/StudentCourseDetailsPage";
+import StudentMyCoursesPage from "./Pages/dashboard/student/StudentMyCoursesPage";
+import StudentLearnCoursePage from "./Pages/dashboard/student/StudentLearnCoursePage";
 function App() {
   return (
 
@@ -47,6 +55,14 @@ function App() {
             <Setting />
           </ProtectedRoute>
         } />
+        <Route
+          path="/dashboard/cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          }
+        />
 
         {/* dashboard route (lowercase) wrapped in auth guard */}
         <Route
@@ -54,6 +70,78 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/teacher/courses"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Teacher"]}>
+                <TeacherCoursesPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/teacher/courses/create"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Teacher"]}>
+                <TeacherCourseFormPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/teacher/courses/:id/edit"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Teacher"]}>
+                <TeacherCourseFormPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/student/browse"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Student"]}>
+                <StudentBrowseCoursesPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/student/course/:id"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Student", "Teacher"]}>
+                <StudentCourseDetailsPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/student/my-courses"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Student"]}>
+                <StudentMyCoursesPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/student/learn/:id"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Student"]}>
+                <StudentLearnCoursePage />
+              </RoleGuard>
             </ProtectedRoute>
           }
         />

@@ -1,6 +1,4 @@
 const contactus = require("../Models/Contactus");
-const nodemailer = require("nodemailer");
-const { validateContactForm, sanitizeContactData } = require("../utlis/validateContact");
 
 /**
  * Create contact message
@@ -247,7 +245,7 @@ exports.deleteMessage = async (req, res) => {
     });
   }
 };
-const contactus = require("../Models/Contactus");
+// const contactus = require("../Models/Contactus");
 const nodemailer = require("nodemailer");
 const { validateContactForm, sanitizeContactData } = require("../utlis/validateContact");
 

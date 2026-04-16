@@ -1,13 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-hot-toast";
 
+const getTotalItemCount = (items = []) =>
+  items.reduce((total, item) => total + (item.quantity || 0), 0);
+
+const storedCartItems = localStorage.getItem("cartItems")
+  ? JSON.parse(localStorage.getItem("cartItems"))
+  : [];
+
 const initialState = {
   totalItems: localStorage.getItem("totalItems")
     ? JSON.parse(localStorage.getItem("totalItems"))
-    : 0,
-  cartItems: localStorage.getItem("cartItems")
-    ? JSON.parse(localStorage.getItem("cartItems"))
-    : [],
+    : getTotalItemCount(storedCartItems),
+  cartItems: storedCartItems,
   loading: false,
   error: null,
 };
@@ -38,9 +43,10 @@ const cartSlice = createSlice({
       } else {
         const tempProduct = { ...action.payload, quantity: 1 };
         state.cartItems.push(tempProduct);
-        state.totalItems += 1;
         toast.success("Product added to cart 🎉");
       }
+
+      state.totalItems = getTotalItemCount(state.cartItems);
 
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
       localStorage.setItem("totalItems", JSON.stringify(state.totalItems));
@@ -53,7 +59,7 @@ const cartSlice = createSlice({
       );
 
       state.cartItems = nextCartItems;
-      state.totalItems -= 1;
+      state.totalItems = getTotalItemCount(state.cartItems);
       toast.success("Product removed from cart 🗑️");
 
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
@@ -83,9 +89,10 @@ const cartSlice = createSlice({
           (cartItem) => cartItem.id !== action.payload.id
         );
         state.cartItems = nextCartItems;
-        state.totalItems -= 1;
         toast.success("Product removed from cart 🗑️");
       }
+
+      state.totalItems = getTotalItemCount(state.cartItems);
 
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
       localStorage.setItem("totalItems", JSON.stringify(state.totalItems));

@@ -40,7 +40,8 @@ export const fetchTeacherCourses = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const courses = await fetchAllCoursesApi();
-      const userId = getState()?.auth?.user?._id;
+      const state = getState() || {};
+      const userId = state?.profile?.user?._id || state?.profile?.user?.id || state?.auth?.user?._id || state?.auth?.user?.id;
       return filterTeacherCourses(courses, userId);
     } catch (error) {
       return rejectWithValue(error.message);
@@ -238,3 +239,4 @@ const courseSlice = createSlice({
 
 export const { clearCourseError, clearSingleCourse } = courseSlice.actions;
 export default courseSlice.reducer;
+

@@ -18,6 +18,7 @@ const StudentCourseDetailsPage = () => {
   const navigate = useNavigate();
   const { singleCourse, loading, error } = useSelector((state) => state.course);
   const user = useSelector((state) => state.profile?.user || state.auth?.user);
+  const role = user?.accountType || user?.role;
   const [isPaying, setIsPaying] = useState(false);
 
   useEffect(() => {
@@ -29,6 +30,11 @@ const StudentCourseDetailsPage = () => {
   }, [error]);
 
   const handleBuy = async () => {
+    if (role !== "Student") {
+      toast.error("Only students can purchase courses");
+      return;
+    }
+
     try {
       setIsPaying(true);
 
@@ -45,15 +51,19 @@ const StudentCourseDetailsPage = () => {
       }
 
       const order = await createOrderApi(id);
+      if (!order?.orderId || !order?.amount) {
+        toast.error("Unable to create payment order");
+        return;
+      }
 
       const options = {
         key: keyId,
-        amount: order?.amount,
-        currency: order?.currency || "INR",
+        amount: order.amount,
+        currency: order.currency || "INR",
         name: "Kodemates",
-        description: order?.courseName || "Course Purchase",
-        image: order?.thumbnail || "/Images/logo2.png",
-        order_id: order?.orderId,
+        description: order.courseName || "Course Purchase",
+        image: order.thumbnail || "/Images/logo2.png",
+        order_id: order.orderId,
         prefill: {
           name: [user?.firstName, user?.lastName].filter(Boolean).join(" "),
           email: user?.email || "",
@@ -77,11 +87,6 @@ const StudentCourseDetailsPage = () => {
           } catch (verifyError) {
             toast.error(verifyError.message || "Payment verification failed");
           }
-        },
-        modal: {
-          ondismiss: () => {
-            setIsPaying(false);
-          },
         },
       };
 

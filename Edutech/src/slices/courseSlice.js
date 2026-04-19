@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  createCategoryApi,
   createCourseApi,
   createLectureApi,
   createOrderApi,
@@ -79,16 +80,21 @@ export const createCourse = createAsyncThunk(
 
       if (Array.isArray(payload.sections) && payload.sections.length > 0) {
         for (const section of payload.sections) {
+          if (!section?.title?.trim()) continue;
           const sectionResponse = await createSectionApi(createdCourse.id, section.title);
           const populatedSections = sectionResponse?.courseContent || [];
           const latestSection = populatedSections[populatedSections.length - 1];
 
           if (latestSection?._id && Array.isArray(section.lectures)) {
             for (const lecture of section.lectures) {
+              if (!lecture.title?.trim()) continue;
+              if (!(lecture.videoFile instanceof File)) {
+                throw new Error(`Please choose a local video file for lecture "${lecture.title}"`);
+              }
               await createLectureApi({
                 sectionId: latestSection._id,
                 title: lecture.title,
-                videoUrl: lecture.videoUrl,
+                videoUrl: lecture.videoFile,
                 notes: lecture.notes,
               });
             }
@@ -96,7 +102,18 @@ export const createCourse = createAsyncThunk(
         }
       }
 
-      return createdCourse;
+      return await fetchCourseDetailsApi(createdCourse.id);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const createCategory = createAsyncThunk(
+  "course/createCategory",
+  async (payload, { rejectWithValue }) => {
+    try {
+      return await createCategoryApi(payload);
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -202,11 +219,42 @@ const courseSlice = createSlice({
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.categories = action.payload;
       })
+      .addCase(fetchCategories.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      .addCase(createCategory.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createCategory.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload) {
+          state.categories.unshift(action.payload);
+        }
+      })
+      .addCase(createCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(createCourse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(createCourse.fulfilled, (state, action) => {
+        state.loading = false;
         state.teacherCourses.unshift(action.payload);
         state.allCourses.unshift(action.payload);
       })
+      .addCase(createCourse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateCourse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(updateCourse.fulfilled, (state, action) => {
+        state.loading = false;
         const nextCourse = action.payload;
         state.teacherCourses = state.teacherCourses.map((course) =>
           course.id === nextCourse.id ? { ...course, ...nextCourse } : course
@@ -218,10 +266,26 @@ const courseSlice = createSlice({
           state.singleCourse = { ...state.singleCourse, ...nextCourse };
         }
       })
+      .addCase(updateCourse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteCourse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(deleteCourse.fulfilled, (state, action) => {
+        state.loading = false;
         const removedId = action.payload;
         state.teacherCourses = state.teacherCourses.filter((course) => course.id !== removedId);
         state.allCourses = state.allCourses.filter((course) => course.id !== removedId);
+        if (state.singleCourse?.id === removedId) {
+          state.singleCourse = null;
+        }
+      })
+      .addCase(deleteCourse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       .addCase(fetchEnrolledCourses.pending, (state) => {
         state.loading = true;

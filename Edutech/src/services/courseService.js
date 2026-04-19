@@ -18,6 +18,18 @@ const normalizeCourse = (course) => ({
     "/Images/background2.jpg",
   level: course?.level || "Beginner",
   category: course?.category || course?.categories || null,
+  studentsEnrolled: course?.studentsEnrolled || [],
+  studentsCount: Array.isArray(course?.studentsEnrolled) ? course.studentsEnrolled.length : Number(course?.studentsCount || 0),
+  sections: (course?.courseContent || course?.sections || []).map((section) => ({
+    id: section?._id || section?.id,
+    title: section?.sectionName || section?.title || "",
+    lectures: (section?.subsections || section?.lectures || []).map((lecture) => ({
+      id: lecture?._id || lecture?.id,
+      title: lecture?.title || "",
+      videoUrl: lecture?.videourl || lecture?.videoUrl || "",
+      notes: lecture?.description || lecture?.notes || "",
+    })),
+  })),
   instructorName:
     course?.instructorName ||
     [course?.instructor?.firstName, course?.instructor?.lastName]
@@ -51,6 +63,14 @@ export const fetchCategoriesApi = async () => {
   return data?.data || [];
 };
 
+export const createCategoryApi = async (payload) => {
+  const data = await postWithFallback(
+    ["/api/category/create", "/api/courses/createCategory"],
+    payload
+  );
+  return data?.data || null;
+};
+
 export const createCourseApi = async (coursePayload) => {
   const formData = new FormData();
   formData.append("courseName", coursePayload.title);
@@ -76,12 +96,26 @@ export const createCourseApi = async (coursePayload) => {
 };
 
 export const updateCourseApi = async (courseId, payload) => {
+  const formData = new FormData();
+  formData.append("courseName", payload.title);
+  formData.append("courseDescription", payload.description);
+  formData.append("whatyouwillLearn", payload.whatYouWillLearn || "Learn in depth");
+  formData.append("price", String(payload.price));
+  formData.append("categories", payload.category);
+  if (payload.level) {
+    formData.append("level", payload.level);
+  }
+  if (payload.thumbnailFile) {
+    formData.append("thumbnailFile", payload.thumbnailFile);
+  }
+
   const data = await putWithFallback(
     [
       `/api/course/update/${courseId}`,
       `/api/courses/updateCourse/${courseId}`,
     ],
-    payload
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
   );
   return normalizeCourse(data?.data || payload);
 };
@@ -102,18 +136,19 @@ export const createSectionApi = async (courseId, sectionName) => {
 };
 
 export const createLectureApi = async ({ sectionId, title, videoUrl, notes }) => {
-  const payload = {
-    sectionId,
-    title,
-    videoUrl,
-    notes,
-    descptions: notes || "",
-    timeDuration: 10,
-  };
+  const formData = new FormData();
+  formData.append("sectionId", sectionId);
+  formData.append("title", title);
+  formData.append("descptions", notes || "Lecture notes");
+  formData.append("timeDuration", "10");
+  if (videoUrl instanceof File) {
+    formData.append("video", videoUrl);
+  }
 
   const data = await postWithFallback(
     ["/api/course/lecture/create", "/api/courses/createSubSection"],
-    payload
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
   );
   return data?.data || null;
 };

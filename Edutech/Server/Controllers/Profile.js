@@ -212,7 +212,28 @@ exports.getAllUserDetails = async (req, res) => {
 exports.getEnrolledCourses = async (req, res) => {
   try {
     const userId = req.user.id;
-    const userDetails = await user.findById(userId).populate("courses").exec();
+    const userDetails = await user
+      .findById(userId)
+      .populate({
+        path: "courses",
+        populate: [
+          {
+            path: "instructor",
+            select: "firstName lastName email accountType profilePicture",
+          },
+          {
+            path: "category",
+            select: "categoryName description",
+          },
+          {
+            path: "courseContent",
+            populate: {
+              path: "subsections",
+            },
+          },
+        ],
+      })
+      .exec();
 
     if (!userDetails) {
       return res.status(404).json({

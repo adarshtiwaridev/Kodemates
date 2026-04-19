@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { BookOpen, GraduationCap, Home, PlusSquare, UserSquare2 } from "lucide-react";
+import { BookOpen, FolderPlus, GraduationCap, Home, PlusSquare, UserSquare2 } from "lucide-react";
 import { useSelector } from "react-redux";
 
 const DashboardLayout = ({ title, children }) => {
@@ -9,8 +9,8 @@ const DashboardLayout = ({ title, children }) => {
   const role = user?.accountType || user?.role;
 
   const teacherLinks = [
-    { path: "/dashboard/teacher/courses", label: "My Courses", icon: <BookOpen size={16} /> },
-    { path: "/dashboard/teacher/courses/create", label: "Create Course", icon: <PlusSquare size={16} /> },
+    { path: "/dashboard/courses", label: "My Courses", icon: <BookOpen size={16} /> },
+    { path: "/dashboard/create-course", label: "Create Course", icon: <PlusSquare size={16} /> },
   ];
 
   const studentLinks = [
@@ -18,7 +18,11 @@ const DashboardLayout = ({ title, children }) => {
     { path: "/dashboard/student/my-courses", label: "My Courses", icon: <UserSquare2 size={16} /> },
   ];
 
-  const links = role === "Teacher" ? teacherLinks : studentLinks;
+  const adminLinks = [
+    { path: "/dashboard/admin/categories", label: "Categories", icon: <FolderPlus size={16} /> },
+  ];
+
+  const links = role === "Teacher" ? teacherLinks : role === "Admin" ? adminLinks : studentLinks;
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
@@ -44,7 +48,7 @@ const DashboardLayout = ({ title, children }) => {
                 key={link.path}
                 to={link.path}
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  location.pathname === link.path
+                  location.pathname === link.path || location.pathname.startsWith(`${link.path}/`)
                     ? "bg-blue-600 text-white"
                     : "hover:bg-slate-100 dark:hover:bg-slate-800"
                 }`}

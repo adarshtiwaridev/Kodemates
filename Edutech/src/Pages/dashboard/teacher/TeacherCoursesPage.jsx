@@ -12,11 +12,17 @@ const TeacherCoursesPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { teacherCourses, loading, error } = useSelector((state) => state.course);
+  const userId = useSelector(
+    (state) => state.profile?.user?._id || state.auth?.user?._id || state.profile?.user?.id || state.auth?.user?.id
+  );
   const [deletingCourse, setDeletingCourse] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchTeacherCourses());
-  }, [dispatch]);
+    if (userId) {
+      dispatch(fetchTeacherCourses());
+    }
+  }, [dispatch, userId]);
 
   useEffect(() => {
     if (error) toast.error(error);
@@ -26,12 +32,14 @@ const TeacherCoursesPage = () => {
 
   const handleDelete = async () => {
     if (!deletingCourse) return;
+    setIsDeleting(true);
     const result = await dispatch(deleteCourse(deletingCourse.id));
     if (!result.error) {
       toast.success("Course deleted successfully");
     } else {
       toast.error(result.payload || "Delete failed");
     }
+    setIsDeleting(false);
     setDeletingCourse(null);
   };
 
@@ -39,10 +47,10 @@ const TeacherCoursesPage = () => {
     <DashboardLayout title="Manage Courses">
       <div className="flex justify-end">
         <button
-          onClick={() => navigate("/dashboard/teacher/courses/create")}
+          onClick={() => navigate("/dashboard/create-course")}
           className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700"
         >
-          Create New Course
+          Create Course
         </button>
       </div>
 
@@ -67,7 +75,7 @@ const TeacherCoursesPage = () => {
               key={course.id}
               course={course}
               isTeacherView
-              onEdit={(selected) => navigate(`/dashboard/teacher/courses/${selected.id}/edit`, { state: { course: selected } })}
+              onEdit={(selected) => navigate(`/dashboard/courses/${selected.id}/edit`, { state: { course: selected } })}
               onDelete={setDeletingCourse}
               detailPath={`/dashboard/student/course/${course.id}`}
             />
@@ -91,9 +99,10 @@ const TeacherCoursesPage = () => {
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700"
+                disabled={isDeleting}
+                className="px-4 py-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-60"
               >
-                Delete
+                {isDeleting ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

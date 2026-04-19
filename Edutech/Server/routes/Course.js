@@ -9,6 +9,8 @@ const {
   createCourse,
   getAllCourses,
   getCourseDetails,
+  updateCourse,
+  deleteCourse,
 } = require("../Controllers/Course")
 
 // Categories Controllers Import
@@ -48,6 +50,8 @@ const { auth, instructor, student, admin } = require("../middleware/Auth")
 
 // Courses can Only be Created by Instructors
 router.post("/createCourse", auth, instructor, createCourse)
+router.put("/updateCourse/:courseId", auth, instructor, updateCourse)
+router.delete("/deleteCourse/:courseId", auth, instructor, deleteCourse)
 // Add a Section to a Course
 router.post("/createSection", auth, instructor, createSection)
 // Update a Section

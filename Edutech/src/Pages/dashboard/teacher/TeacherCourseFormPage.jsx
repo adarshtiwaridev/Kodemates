@@ -10,8 +10,17 @@ import {
   updateCourse,
 } from "../../../slices/courseSlice";
 
-const blankLecture = { title: "", videoUrl: "", notes: "" };
+const blankLecture = { title: "", videoUrl: "", videoFile: null, notes: "" };
 const blankSection = { title: "", lectures: [{ ...blankLecture }] };
+const createEmptyForm = () => ({
+  title: "",
+  description: "",
+  price: "",
+  category: "",
+  level: "Beginner",
+  thumbnailFile: null,
+  sections: [{ ...blankSection }],
+});
 
 const TeacherCourseFormPage = () => {
   const dispatch = useDispatch();
@@ -24,15 +33,8 @@ const TeacherCourseFormPage = () => {
 
   const { categories, singleCourse, loading } = useSelector((state) => state.course);
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    price: "",
-    category: "",
-    level: "Beginner",
-    thumbnailFile: null,
-    sections: [{ ...blankSection }],
-  });
+  const [form, setForm] = useState(createEmptyForm);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -57,13 +59,22 @@ const TeacherCourseFormPage = () => {
         source?.categories ||
         "",
       level: source.level || "Beginner",
-      sections: source.sections || [{ ...blankSection }],
+      sections: source.sections?.length ? source.sections : [{ ...blankSection }],
     }));
   }, [isEdit, editingCourse, singleCourse]);
 
   const canSubmit = useMemo(() => {
-    return form.title && form.description && form.price && form.category;
-  }, [form]);
+    const hasPrice = Number(form.price) >= 0 && form.price !== "";
+    const hasThumbnail = isEdit || Boolean(form.thumbnailFile);
+    const validSections = form.sections.every((section) => {
+      if (!section.title?.trim()) return false;
+      return section.lectures.every((lecture) => {
+        if (!lecture.title?.trim()) return false;
+        return isEdit ? true : lecture.videoFile instanceof File;
+      });
+    });
+    return form.title.trim() && form.description.trim() && hasPrice && form.category && hasThumbnail && validSections;
+  }, [form, isEdit]);
 
   const updateSection = (index, key, value) => {
     setForm((prev) => {
@@ -123,7 +134,11 @@ const TeacherCourseFormPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!canSubmit) {
-      toast.error("Please fill all required fields");
+      toast.error(
+        isEdit
+          ? "Please fill all required fields"
+          : "Please complete all required fields, including thumbnail, section titles, and local lecture videos"
+      );
       return;
     }
 
@@ -132,6 +147,7 @@ const TeacherCourseFormPage = () => {
       price: Number(form.price),
     };
 
+    setSubmitting(true);
     let result;
     if (isEdit) {
       result = await dispatch(updateCourse({ courseId: id, payload }));
@@ -141,39 +157,53 @@ const TeacherCourseFormPage = () => {
 
     if (!result.error) {
       toast.success(isEdit ? "Course updated" : "Course created");
-      navigate("/dashboard/teacher/courses");
+      if (!isEdit) {
+        setForm(createEmptyForm());
+      }
+      navigate("/dashboard/courses");
     } else {
       toast.error(result.payload || "Unable to save course");
     }
+    setSubmitting(false);
   };
 
   return (
     <DashboardLayout title={isEdit ? "Update Course" : "Create Course"}>
+      {isEdit && loading && !editingCourse && !singleCourse ? (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8">
+          <p className="text-sm text-slate-500 dark:text-slate-400">Loading course data...</p>
+        </div>
+      ) : (
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className="space-y-2">
             <span className="text-sm font-semibold">Title</span>
-            <input className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" value={form.title} onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))} />
+            <input required className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" value={form.title} onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))} />
           </label>
 
           <label className="space-y-2">
             <span className="text-sm font-semibold">Price</span>
-            <input type="number" min="0" className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" value={form.price} onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))} />
+            <input required type="number" min="0" className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" value={form.price} onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))} />
           </label>
 
           <label className="space-y-2 md:col-span-2">
             <span className="text-sm font-semibold">Description</span>
-            <textarea rows={4} className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} />
+            <textarea required rows={4} className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} />
           </label>
 
           <label className="space-y-2">
             <span className="text-sm font-semibold">Category</span>
-            <select className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" value={form.category} onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}>
+            <select required className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" value={form.category} onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}>
               <option value="">Select category</option>
               {categories.map((category) => (
                 <option key={category._id} value={category._id}>{category.categoryName || category.name}</option>
               ))}
             </select>
+            {!categories.length && (
+              <p className="text-xs text-amber-600 dark:text-amber-400">
+                No categories available right now. Please create categories in the backend first.
+              </p>
+            )}
           </label>
 
           <label className="space-y-2">
@@ -186,7 +216,7 @@ const TeacherCourseFormPage = () => {
           </label>
 
           <label className="space-y-2 md:col-span-2">
-            <span className="text-sm font-semibold">Thumbnail Upload</span>
+            <span className="text-sm font-semibold">Thumbnail Upload {isEdit ? "(optional)" : ""}</span>
             <input type="file" accept="image/*" className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" onChange={(e) => setForm((prev) => ({ ...prev, thumbnailFile: e.target.files?.[0] || null }))} />
           </label>
         </div>
@@ -213,7 +243,23 @@ const TeacherCourseFormPage = () => {
                 {section.lectures.map((lecture, lectureIndex) => (
                   <div key={lectureIndex} className="rounded-xl border border-slate-200 dark:border-slate-800 p-3 space-y-2">
                     <input placeholder="Lecture title" value={lecture.title} onChange={(e) => updateLecture(sectionIndex, lectureIndex, "title", e.target.value)} className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" />
-                    <input placeholder="Video URL" value={lecture.videoUrl} onChange={(e) => updateLecture(sectionIndex, lectureIndex, "videoUrl", e.target.value)} className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" />
+                    <div className="space-y-2">
+                      <input
+                        type="file"
+                        accept="video/*"
+                        className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null;
+                          updateLecture(sectionIndex, lectureIndex, "videoFile", file);
+                          updateLecture(sectionIndex, lectureIndex, "videoUrl", file ? file.name : lecture.videoUrl || "");
+                        }}
+                      />
+                      {(lecture.videoFile || lecture.videoUrl) && (
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                          {lecture.videoFile ? `Selected video: ${lecture.videoFile.name}` : `Current video: ${lecture.videoUrl}`}
+                        </p>
+                      )}
+                    </div>
                     <textarea placeholder="Notes (optional)" rows={3} value={lecture.notes} onChange={(e) => updateLecture(sectionIndex, lectureIndex, "notes", e.target.value)} className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2" />
                     <button type="button" onClick={() => removeLecture(sectionIndex, lectureIndex)} className="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700">Remove Lecture</button>
                   </div>
@@ -225,10 +271,11 @@ const TeacherCourseFormPage = () => {
           ))}
         </div>
 
-        <button disabled={loading} className="px-5 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-60">
-          {loading ? "Saving..." : isEdit ? "Update Course" : "Create Course"}
+        <button disabled={loading || submitting} className="px-5 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-60">
+          {loading || submitting ? "Saving..." : isEdit ? "Update Course" : "Create Course"}
         </button>
       </form>
+      )}
     </DashboardLayout>
   );
 };

@@ -24,6 +24,12 @@ const CourseCard = ({
           {course.description}
         </p>
 
+        {isTeacherView && (
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Students Enrolled: {course.studentsCount || 0}
+          </p>
+        )}
+
         <div className="flex items-center justify-between text-sm">
           <span className="font-black text-blue-600 dark:text-blue-400">${course.price}</span>
           <span className="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800">

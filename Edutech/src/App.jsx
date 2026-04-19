@@ -23,6 +23,7 @@ import ResetPassword from "./Pages/ResetPassword";
 import Cart from "./Pages/dashboard/Cart";
 import TeacherCoursesPage from "./Pages/dashboard/teacher/TeacherCoursesPage";
 import TeacherCourseFormPage from "./Pages/dashboard/teacher/TeacherCourseFormPage";
+import AdminCategoriesPage from "./Pages/dashboard/admin/AdminCategoriesPage";
 import StudentBrowseCoursesPage from "./Pages/dashboard/student/StudentBrowseCoursesPage";
 import StudentCourseDetailsPage from "./Pages/dashboard/student/StudentCourseDetailsPage";
 import StudentMyCoursesPage from "./Pages/dashboard/student/StudentMyCoursesPage";
@@ -78,6 +79,48 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/admin/categories"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Admin"]}>
+                <AdminCategoriesPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/courses"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Teacher"]}>
+                <TeacherCoursesPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/create-course"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Teacher"]}>
+                <TeacherCourseFormPage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/courses/:id/edit"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["Teacher"]}>
+                <TeacherCourseFormPage />
+              </RoleGuard>
             </ProtectedRoute>
           }
         />

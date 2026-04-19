@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { User, Mail, Phone, Shield, BookOpen, Clock, Sun, Moon, ShoppingCart } from 'lucide-react';
+import { User, Mail, Phone, Shield, BookOpen, Clock, Sun, Moon, ShoppingCart, PlusSquare, FolderPlus } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchProfile } from '../slices/profileSlice';
@@ -38,6 +38,8 @@ const Dashboard = () => {
 
   const themeClass = isDark ? "bg-slate-950 text-slate-100" : "bg-slate-50 text-slate-900";
   const cardClass = isDark ? "bg-slate-900/50 border-slate-800" : "bg-white border-slate-200";
+  const isTeacher = userData?.accountType === "Teacher" || userData?.role === "Teacher";
+  const isAdmin = userData?.accountType === "Admin" || userData?.role === "Admin";
 
   if (!token) return null; // early return while redirecting
 
@@ -62,6 +64,26 @@ const Dashboard = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          {isAdmin && (
+            <button
+              onClick={() => navigate('/dashboard/admin/categories')}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 text-white text-sm font-semibold hover:bg-violet-700 transition-colors"
+            >
+              <FolderPlus size={16} />
+              Add Category
+            </button>
+          )}
+
+          {isTeacher && (
+            <button
+              onClick={() => navigate('/dashboard/create-course')}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors"
+            >
+              <PlusSquare size={16} />
+              Create Course
+            </button>
+          )}
+
           <button
             onClick={() => navigate('/dashboard/cart')}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
